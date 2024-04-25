@@ -2,22 +2,132 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>메인화면</title>
-    <link rel="stylesheet" href="/css/table.css"/>
+    <title>Login</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .vid-container {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .inner-container {
+            width: 600px;
+            height: 500px;
+            position: absolute;
+            top: calc(50vh - 300px);
+            left: calc(50vw - 200px);
+            overflow: hidden;
+        }
+
+        .box {
+            position: absolute;
+            height: 500px;
+            width: 400px;
+            font-family: Helvetica;
+            color: #fff;
+            background: #335030;
+            padding: 30px 0px;
+        }
+
+        .box input {
+            display: block;
+            width: 350px;
+            margin: 20px auto;
+            padding: 15px;
+            background: #ffffff;
+            color: #828282;
+            border: 0;
+        }
+
+        .box h1 {
+            display: block;
+            margin: 20px auto;
+            padding: 15px;
+            font-size: 30px;
+        }
+
+        .box input:focus, .box input:active, .box button:focus, .box button:active {
+            outline: none;
+        }
+
+        .box button {
+            background: #ffffff;
+            border: 0;
+            color: #828282;
+            padding: 10px;
+            font-size: 20px;
+            width: 330px;
+            margin: 10px auto;
+            display: block;
+            cursor: pointer;
+        }
+
+        .box p {
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .box p span {
+            cursor: pointer;
+            color: #666;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+            width: 90%;
+            margin: auto;
+        }
+
+        .button-container button {
+            font-size: 15px;
+            width: 20%;
+        }
+
+        /* 버튼 사이 여백 추가 */
+        .button-container button + button {
+            margin-left: 10px;
+        }
+
+        #btnLogin {
+            display: inline-block;
+            width: 100px;
+            float: right;
+            margin-right: 10px;
+        }
+
+
+    </style>
     <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
     <script type="text/javascript">
 
         // HTML 로딩이 완료되고, 실행됨
         $(document).ready(function () {
 
-            // 일반 로그인
+            // 일반 회원가입
             $("#btnUserReg").on("click", function () {
                 location.href = "/user/userRegForm";
             })
 
             // 일반 회원가입
             $("#btnMain").on("click", function () {
-                location.href = "/html/index.html";
+                location.href = "/page/main";
+            })
+
+            // 아이디 찾기
+            $("#btnSearchUserId").on("click", function() {
+                location.href = "/user/searchUserId";
+            })
+
+            // 비밀번호 찾기
+            $("#btnSearchPassword").on("click", function() {
+                location.href = "/user/searchPassword";
             })
 
             // 일반 로그인
@@ -58,33 +168,25 @@
     </script>
 </head>
 <body>
-<h2>로그인하기</h2>
-<hr/>
+<h1> &nbsp; Allergy</h1>
+<hr style="border-width: 5px;"/>
 <br/>
-<form id="f">
-    <div class="divTable minimalistBlack">
-        <div class="divTableBody">
-            <div class="divTableRow">
-                <div class="divTableCell">아이디
+<div class="vid-container">
+    <div class="inner-container">
+        <div class="box">
+            <form class="register-form" id="f">
+                <h1>Login</h1>
+                <input type="text" id="userId" name="userId" placeholder="ID"/>
+                <input type="password" id="password" name="password" placeholder="Password"/>
+                <button id="btnLogin" type="button">로그인</button>
+                <div class="button-container">
+                    <button id="btnUserReg" type="button" style="width:33%">회원가입하기</button>
+                    <button id="btnSearchUserId" type="button" style="width:33%">아이디찾기</button>
+                    <button id="btnSearchPassword" type="button" style="width:33%">비밀번호찾기</button>
                 </div>
-                <div class="divTableCell">
-                    <input type="text" name="userId" id="userId" style="width: 95%"/>
-                </div>
-            </div>
-            <div class="divTableRow">
-                <div class="divTableCell">비밀번호
-                </div>
-                <div class="divTableCell">
-                    <input type="password" name="password" id="password" style="width: 95%"/>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
-    <div>
-        <button id="btnLogin" type="button">로그인</button>
-        <button id="btnUserReg" type="button">회원가입</button>
-        <button id="btnMain" type="button">메인화면</button>
-    </div>
-</form>
+</div>
 </body>
 </html>

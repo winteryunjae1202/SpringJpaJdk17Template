@@ -5,8 +5,6 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.io.Serializable;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,12 +32,11 @@ public class UserInfoEntity {
     @Column(name = "EMAIL", nullable = false)
     private String email;
 
-    @NonNull
-    @Column(name = "ADDR1", nullable = false)
-    private String addr1;
+    @Column(name = "NICKNAME", nullable = false)
+    private String nickname;
 
-    @Column(name = "ADDR2", nullable = false)
-    private String addr2;
+    @Column(name = "ALLERGY", nullable = false)
+    private String allergy;
 
     @Column(name = "reg_id", updatable = false)
     private String regId;

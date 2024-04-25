@@ -1,5 +1,6 @@
 package kopo.poly.service;
 
+import kopo.poly.dto.MsgDTO;
 import kopo.poly.dto.UserInfoDTO;
 
 public interface IUserInfoService {
@@ -21,11 +22,31 @@ public interface IUserInfoService {
     int insertUserInfo(UserInfoDTO pDTO) throws Exception;
 
     /**
-     *  로그인을 위해 아이디와 비밀번호가 일치하는지 확인하기
+     * 로그인을 위해 아이디와 비밀번호가 일치하는지 확인하기
      *
      * @param pDTO 로그인을 위한 회원정보
      * @return 회원가입 결과
      */
     int getUserLogin(UserInfoDTO pDTO) throws Exception;
 
+
+    /**
+     * 아이디 찾기용 이메일 조회
+     */
+    UserInfoDTO getEmailExists(UserInfoDTO pDTO) throws Exception;
+
+    /**
+     * 비밀번호 찾기용 아이디, 이름 조회
+     */
+    MsgDTO getUserNameExists(UserInfoDTO pDTO) throws Exception;
+
+    /**
+     * 이메일 보내기
+     */
+    UserInfoDTO getEmailSend(UserInfoDTO pDTO) throws Exception;
+
+    /**
+     * 이메일 조회
+     */
+    UserInfoDTO getEmailOnlyExists(UserInfoDTO pDTO) throws Exception;
 }

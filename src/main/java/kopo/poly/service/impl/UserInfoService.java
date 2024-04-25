@@ -1,16 +1,21 @@
 package kopo.poly.service.impl;
 
+import kopo.poly.dto.MailDTO;
+import kopo.poly.dto.MsgDTO;
 import kopo.poly.dto.UserInfoDTO;
 import kopo.poly.repository.UserInfoRepository;
 import kopo.poly.repository.entity.UserInfoEntity;
+import kopo.poly.service.IMailService;
 import kopo.poly.service.IUserInfoService;
 import kopo.poly.util.CmmUtil;
 import kopo.poly.util.DateUtil;
+import kopo.poly.util.EncryptUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,6 +26,7 @@ public class UserInfoService implements IUserInfoService {
     // userInfoRepository 변수에 이미 메모리에 올라간 UserInfoRepository 객체를 넣어줌
     // 예전에는 autowired 어노테이션을 통해 설정했었지만, 이젠 생성자를 통해 객체 주입함
     private final UserInfoRepository userInfoRepository;
+    private final IMailService mailService;
 
     @Override
     public UserInfoDTO getUserIdExists(UserInfoDTO pDTO) throws Exception {
@@ -60,8 +66,8 @@ public class UserInfoService implements IUserInfoService {
         String userName = CmmUtil.nvl(pDTO.userName());
         String password = CmmUtil.nvl(pDTO.password());
         String email = CmmUtil.nvl(pDTO.email());
-        String addr1 = CmmUtil.nvl(pDTO.addr1());
-        String addr2 = CmmUtil.nvl(pDTO.addr2());
+        String allergy = CmmUtil.nvl(pDTO.allergy());
+        String nickname = CmmUtil.nvl(pDTO.nickname());
 
         log.info("pDTO : " + pDTO);
 
@@ -79,7 +85,7 @@ public class UserInfoService implements IUserInfoService {
                     .userId(userId).userName(userName)
                     .password(password)
                     .email(email)
-                    .addr1(addr1).addr2(addr2)
+                    .allergy(allergy).nickname(nickname)
                     .regId(userId).regDt(DateUtil.getDateTime("yyyy-MM-dd hh:mm:ss"))
                     .chgId(userId).chgDt(DateUtil.getDateTime("yyyy-MM-dd hh:mm:ss"))
                     .build();
@@ -138,4 +144,141 @@ public class UserInfoService implements IUserInfoService {
         return res;
     }
 
+    @Override
+    public UserInfoDTO getEmailExists(UserInfoDTO pDTO) throws Exception {
+        log.info(this.getClass().getName() + ".getEmailExists Start!");
+
+        UserInfoDTO rDTO;
+
+        String userName = CmmUtil.nvl(pDTO.userName());
+        String email = EncryptUtil.encAES128CBC(CmmUtil.nvl(pDTO.email()));
+
+        log.info("userName : " + userName);
+        log.info("email : " + email);
+
+        Optional<UserInfoEntity> rEntity = userInfoRepository.findByUserNameAndEmail(userName, email);
+
+        if (rEntity.isPresent()) {
+
+            UserInfoEntity userInfoEntity = rEntity.get();
+            String userId = userInfoEntity.getUserId();
+            log.info("userId : " + userId);
+
+            rDTO = UserInfoDTO.builder()
+                    .existsYn("Y")
+                    .userId(userId)
+                    .userName(userName)
+                    .build();
+        } else {
+            rDTO = UserInfoDTO.builder().existsYn("N").build();
+        }
+
+        log.info(this.getClass().getName() + ".getEmailExists End!");
+
+        return rDTO;
+    }
+
+    @Override
+    public UserInfoDTO getEmailOnlyExists(UserInfoDTO pDTO) throws Exception {
+        log.info(this.getClass().getName() + ".getEmailOnlyExists Start!");
+
+        UserInfoDTO rDTO;
+
+        String email = EncryptUtil.encAES128CBC(CmmUtil.nvl(pDTO.email()));
+
+        log.info("email : " + email);
+
+        Optional<UserInfoEntity> rEntity = userInfoRepository.findByEmail(email);
+
+        if (rEntity.isPresent()) {
+
+            UserInfoEntity userInfoEntity = rEntity.get();
+            String userId = userInfoEntity.getUserId();
+            log.info("userId : " + userId);
+
+            rDTO = UserInfoDTO.builder()
+                    .existsYn("Y")
+                    .userId(userId)
+                    .build();
+        } else {
+            rDTO = UserInfoDTO.builder().existsYn("N").build();
+        }
+
+        log.info(this.getClass().getName() + ".getEmailOnlyExists End!");
+
+        return rDTO;
+    }
+
+    @Override
+    public UserInfoDTO getEmailSend(UserInfoDTO pDTO) throws Exception {
+
+        log.info(this.getClass().getName() + ".getEmailSend Start!");
+
+        // 6자리 랜덤 숫자 생성하기
+        int mailNumber = ThreadLocalRandom.current().nextInt(100000, 1000000);
+
+        log.info("mailNumber : " + mailNumber);
+
+        // 인증번호 발송 로직
+        MailDTO dto = MailDTO.builder().title("이메일 중복 확인 인증번호 발송 메일").contents("인증번호는 " + mailNumber + " 입니다.").toMail(EncryptUtil.decAES128CBC(CmmUtil.nvl(pDTO.email()))).build();
+
+        mailService.doSendMail(dto); // 이메일 발송
+
+        dto = null;
+
+        UserInfoDTO rDTO = UserInfoDTO.builder().authNumber(mailNumber).build();
+
+//        log.info(rDTO.getMailNumber());
+
+        log.info(this.getClass().getName() + ".getEmailSend End!"); // 인증번호를 결과값에 넣어주기
+
+        return rDTO;
+    }
+
+    @Override
+    public MsgDTO getUserNameExists(UserInfoDTO pDTO) throws Exception {
+
+        log.info(this.getClass().getName() + ".getUserNameExists Start!");
+
+        MsgDTO dto = MsgDTO.builder().build();
+        int res = 0;
+
+        String userName = CmmUtil.nvl(pDTO.userName());
+        String userId = CmmUtil.nvl(pDTO.userId());
+        String password = EncryptUtil.encHashSHA256(pDTO.password());
+
+        log.info("userName : " + userName);
+        log.info("userId : " + userId);
+        log.info("password : " + password);
+
+        Optional<UserInfoEntity> rEntity = userInfoRepository.findByUserNameAndUserId(userName, userId);
+
+        if (rEntity.isPresent()) {
+            String email = rEntity.get().getEmail();
+            String allergy = rEntity.get().getAllergy();
+            String nickname = rEntity.get().getNickname();
+            String regDt = rEntity.get().getRegDt();
+
+            // 회원정보 재 기입
+            UserInfoEntity pEntity = UserInfoEntity.builder()
+                    .userId(userId).userName(userName)
+                    .password(password)
+                    .email(email)
+                    .allergy(allergy).nickname(nickname)
+                    .regId(userId).regDt(regDt)
+                    .chgId(userId).chgDt(DateUtil.getDateTime("yyyy-MM-dd hh:mm:ss"))
+                    .build();
+
+            // 회원정보 DB에 저장
+            userInfoRepository.save(pEntity);
+
+            res = 1;
+
+            dto = MsgDTO.builder().result(res).build();
+        }
+
+        log.info(this.getClass().getName() + ".getUserNameExists End!");
+
+        return dto;
+    }
 }

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>아이디 찾기</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .vid-container {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .inner-container {
+            width: 600px;
+            height: 500px;
+            position: absolute;
+            top: calc(50vh - 300px);
+            left: calc(50vw - 200px);
+            overflow: hidden;
+        }
+
+        .box {
+            position: absolute;
+            height: 500px;
+            width: 400px;
+            font-family: Helvetica;
+            color: #fff;
+            background: #335030;
+            padding: 30px 0px;
+        }
+
+        .box input {
+            display: block;
+            width: 350px;
+            margin: 20px auto;
+            padding: 15px;
+            background: #ffffff;
+            color: #828282;
+            border: 0;
+        }
+
+        .box h1 {
+            display: block;
+            margin: auto;
+            padding: 15px;
+            font-size: 30px;
+            text-align : center;
+        }
+
+        .box input:focus, .box input:active, .box button:focus, .box button:active {
+            outline: none;
+        }
+
+        .box button {
+            background: #ffffff;
+            border: 0;
+            color: #828282;
+            padding: 10px;
+            font-size: 20px;
+            width: 330px;
+            margin: 10px auto;
+            display: block;
+            cursor: pointer;
+        }
+
+        .box p {
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .box p span {
+            cursor: pointer;
+            color: #666;
+        }
+
+        .button-container button {
+            font-size: 15px;
+            width: 20%;
+        }
+
+        /* 버튼 사이 여백 추가 */
+        .button-container button + button {
+            margin-left: 10px;
+        }
+
+        #btnSearchUserId {
+            color: black;
+        }
+    </style>
+    <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            let f = document.getElementById("f"); // form 태그
+
+            $("#btnSearchUserId").on("click", function () { // 버튼 클릭했을때, 발생되는 이벤트 생성함(onclick 이벤트와 동일함)
+                getEmailExists(f)
+            })
+
+        })
+            function getEmailExists(f) {
+                if (f.userName.value === "") {
+                    alert("이름를 입력하세요.");
+                    f.userName.focus();
+                    return;
+                }
+                if (f.email.value === "") {
+                    alert("이메일을 입력하세요.");
+                    f.email.focus();
+                    return;
+                }
+                // Ajax 호출해서 회원가입하기
+                $.ajax({
+                        url: "/user/searchId",
+                        type: "post", // 전송방식은 Post
+                        dataType: "JSON", // 전송 결과는 JSON으로 받기
+                        data: $("#f").serialize(), // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기
+                        success: function (json) { // 호출이 성공했다면..
+                            let userId = json.userId;
+                            let userName = json.userName;
+                            if(userId) {
+                                alert(userName + "님의 아이디는 " + userId + " 입니다.");
+                                window.location.href="/user/login";
+                            } else {
+                                alert("이름과 이메일에 일치하는 아이디를 찾지 못했습니다.");
+                                window.location.reload();
+                            }
+                        }
+                    }
+                )
+            }
+    </script>
+</head>
+<body>
+<h1> &nbsp; Allergy</h1>
+<hr style="border-width: 5px;"/>
+<br/>
+<div class="vid-container">
+    <div class="inner-container">
+        <div class="box">
+                <h1>아이디 찾기</h1>
+            <form class="login-form" id="f">
+                <input type="text" id="userName" name="userName" placeholder="이름을 입력해주세요"/>
+                <input type="email" id="email" name="email" placeholder="이메일을 입력해주세요."/> <br/>
+                <button id="btnSearchUserId" type="button">아이디 찾기</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

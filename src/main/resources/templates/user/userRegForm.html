@@ -2,14 +2,100 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>회원가입 화면</title>
-    <link rel="stylesheet" href="/css/table.css"/>
-    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <title>SignUp</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .vid-container {
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .inner-container {
+            width: 600px;
+            height: 1000px;
+            position: absolute;
+            top: calc(50vh - 300px);
+            left: calc(50vw - 200px);
+            overflow: hidden;
+        }
+
+        .box {
+            position: absolute;
+            width: 400px;
+            height: 850px;
+            font-family: Helvetica;
+            color: #ffffff;
+            background: #335030;
+            padding: 30px 0px;
+        }
+
+        .box input {
+            display: block;
+            width: 350px;
+            margin: 20px auto;
+            padding: 15px;
+            background: #ffffff;
+            color: #828282;
+            border: 0;
+        }
+
+        .box h1 {
+            display: block;
+            margin: auto;
+            padding: 15px;
+            font-size: 30px;
+            text-align : center;
+        }
+
+        .box input:focus, .box input:active, .box button:focus, .box button:active {
+            outline: none;
+        }
+
+        .box button {
+            background: #ffffff;
+            border: 0;
+            color: #828282;
+            padding: 10px;
+            font-size: 15px;
+            width: 330px;
+            margin: 10px auto;
+            display: block;
+            cursor: pointer;
+        }
+
+        .box p {
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .box p span {
+            cursor: pointer;
+            color: #666;
+        }
+
+
+        .button-container button {
+            font-size: 15px;
+            width: 20%;
+        }
+
+        /* 버튼 사이 여백 추가 */
+        .button-container button + button {
+            margin-left: 10px;
+        }
+
+    </style>
     <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
     <script type="text/javascript">
 
         // 아이디 중복체크여부 (중복 Y / 중복아님 : N)
         let userIdCheck = "Y";
+
+        let emailAuthNumber = "";
 
         // HTML로딩이 완료되고, 실행됨
         $(document).ready(function () {
@@ -20,9 +106,9 @@
                 userIdExists(f)
             })
 
-            // 우편번호 찾기
-            $("#btnAddr").on("click", function () { // 버튼 클릭했을때, 발생되는 이벤트 생성함(onclick 이벤트와 동일함)
-                kakaoPost(f);
+            // 이메일 중복체크
+            $("#btnEmail").on("click", function () { // 버튼 클릭했을때, 발생되는 이벤트 생성함(onclick 이벤트와 동일함)
+                emailExists(f)
             })
 
             // 회원가입
@@ -57,22 +143,33 @@
             )
         }
 
-        // 카카오 우편번호 조회 API 호출
-        function kakaoPost(f) {
-            new daum.Postcode({
-                oncomplete: function (data) {
-                    // Kakao에서 제공하는 data는 JSON구조로 주소 조회 결과값을 전달함
-                    // 주요 결과값
-                    // 주소 : data.address
-                    // 우편번호 : data.zonecode
-                    let address = data.address; // 주소
-                    let zonecode = data.zonecode; // 우편번호
-                    f.addr1.value = "(" + zonecode + ")" + address
+        // 이메일 중복 체크
+        function emailExists(f) {
+            if (f.email.value === "") {
+                alert("이메일을 입력하세요.");
+                f.email.focus();
+                return;
+            }
+
+            $.ajax({
+                    url: "/user/getEmailOnlyExists",
+                    type: "post", // 전송방식은 Post
+                    dataType: "JSON", // 전송 결과는 JSON으로 받기
+                    data: $("#f").serialize(), // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기
+                    success: function (json) { // 호출이 성공했다면..
+                        if (json.existsYn === "Y") {
+                            alert("이미 가입된 이메일 주소가 존재합니다.");
+                            f.email.focus();
+                        } else {
+                            alert("이메일로 인증번호가 발송되었습니다. \n받은 메일의 인증번호를 입력하기 바랍니다.");
+                            emailAuthNumber = json.authNumber;
+                        }
+                    }
                 }
-            }).open();
+            )
         }
 
-        //회원가입 정보의 유효성 체크하기
+        // 회원가입 정보의 유효성 체크하기
         function doSubmit(f) {
             if (f.userId.value === "") {
                 alert("아이디를 입력하세요.");
@@ -109,14 +206,19 @@
                 f.email.focus();
                 return;
             }
-            if (f.addr1.value === "") {
-                alert("주소를 입력하세요.");
-                f.addr1.focus();
+            if (f.nickname.value === "") {
+                alert("닉네임을 입력하세요.");
+                f.nickname.focus();
                 return;
             }
-            if (f.addr2.value === "") {
-                alert("상세주소를 입력하세요.");
-                f.addr2.focus();
+            if (f.authNumber.value === "") {
+                alert("이메일 인증번호를 입력하세요.");
+                f.authNumber.focus();
+                return;
+            }
+            if (f.authNumber.value != emailAuthNumber) {
+                alert("이메일 인증번호가 일치하지 않습니다.");
+                f.authNumber.focus();
                 return;
             }
             // Ajax 호출해서 회원가입하기
@@ -139,68 +241,43 @@
     </script>
 </head>
 <body>
-<h2>회원 가입하기</h2>
-<hr/>
+<h1> &nbsp; Allergy</h1>
+<hr style="border-width: 5px;"/>
 <br/>
-<form id="f">
-    <div class="divTable minimalistBlack">
-        <div class="divTableBody">
-            <div class="divTableRow">
-                <div class="divTableCell">* 아이디
+<div class="vid-container">
+    <div class="inner-container">
+        <div class="box">
+            <form class="register-form" id="f">
+                <h1>회원가입</h1>
+
+                <div class="form" style="padding-top: 10%;">
+
+                    <input type="text" name="userId" id="userId" placeholder="아이디">
+                    <button id="btnUserId" type="button">중복확인</button>
+
+                    <input type="password" name="password" id="password" minlength="4"  maxlength="20" placeholder="비밀번호를 입력해주세요">
+
+                    <input type="password" name="password2" id="password2" minlength="4"  maxlength="20" placeholder="비밀번호를 확인해주세요.">
+
+                    <input type="email" name="email" id="email" placeholder="이메일을 입력해주세요.">
+                    <button id="btnEmail" type="button">인증번호 받기</button>
+
+                    <input type="text" name="authNumber" id="authNumber" placeholder="인증번호를 입력해주세요.">
+
+                    <input type="text" name="nickname" id="nickname" placeholder="닉네임을 입력해주세요.">
+
+                    <input type="text" name="userName" id="userName" placeholder="이름을 입력해주세요.">
+
+                    <input type="text" name="allergy" id="allergy" placeholder="알러지를 입력해주세요.">
+                    <br/>
+                    <button id="submit" type="button" onclick="doSubmit(this.form)">가입하기</button>
+
+                    <p>이미 가입하셨나요? <a href="/user/login" style="color:  #77bb77;">로그인</a></p>
                 </div>
-                <div class="divTableCell">
-                    <input type="text" name="userId" style="width:80%" placeholder="아이디"/>
-                    <button id="btnUserId" type="button">아이디 중복체크</button>
-                </div>
-            </div>
-            <div class="divTableRow">
-                <div class="divTableCell">* 이름
-                </div>
-                <div class="divTableCell">
-                    <input type="text" name="userName" style="width:95%" placeholder="이름"/>
-                </div>
-            </div>
-            <div class="divTableRow">
-                <div class="divTableCell">* 비밀번호
-                </div>
-                <div class="divTableCell">
-                    <input type="password" name="password" style="width:95%" placeholder="비밀번호"/>
-                </div>
-            </div>
-            <div class="divTableRow">
-                <div class="divTableCell">* 비밀번호확인
-                </div>
-                <div class="divTableCell">
-                    <input type="password" name="password2" style="width:95%" placeholder="비밀번호 확인"/>
-                </div>
-            </div>
-            <div class="divTableRow">
-                <div class="divTableCell">* 이메일
-                </div>
-                <div class="divTableCell">
-                    <input type="email" name="email" style="width:95%" placeholder="이메일주소"/>
-                </div>
-            </div>
-            <div class="divTableRow">
-                <div class="divTableCell">* 주소
-                </div>
-                <div class="divTableCell">
-                    <input type="text" name="addr1" style="width:85%" placeholder="주소"/>
-                    <button id="btnAddr" type="button">우편번호</button>
-                </div>
-            </div>
-            <div class="divTableRow">
-                <div class="divTableCell">* 상세 주소
-                </div>
-                <div class="divTableCell">
-                    <input type="text" name="addr2" style="width:95%" placeholder="상세주소"/>
-                </div>
-            </div>
+
+            </form>
         </div>
     </div>
-    <div>
-        <button id="btnSend" type="button">회원가입</button>
-    </div>
-</form>
+</div>
 </body>
 </html>

@@ -1,26 +1,20 @@
 package kopo.poly.controller;
 
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import kopo.poly.dto.MsgDTO;
-import kopo.poly.dto.NoticeDTO;
 import kopo.poly.dto.UserInfoDTO;
-import kopo.poly.service.INoticeJoinService;
 import kopo.poly.service.IUserInfoService;
 import kopo.poly.util.CmmUtil;
 import kopo.poly.util.EncryptUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -72,6 +66,39 @@ public class UserInfoController {
     }
 
     /**
+     * 이메일 중복체크
+     */
+    @ResponseBody
+    @PostMapping(value = "getEmailOnlyExists")          // 이메일 중복찾기
+    public UserInfoDTO getEmailExists(HttpServletRequest request) throws Exception {
+
+        log.info(this.getClass().getName() + ".getEmailOnlyExists Start!");
+
+        String email = CmmUtil.nvl(request.getParameter("email"));
+
+        log.info("email : " + email);
+
+        UserInfoDTO pDTO = UserInfoDTO.builder().email(EncryptUtil.encAES128CBC(email)).build();
+
+        UserInfoDTO rDTO = Optional.ofNullable(userInfoService.getEmailOnlyExists(pDTO)).orElseGet(() -> UserInfoDTO.builder().build());
+
+        String existsYn = rDTO.existsYn();
+
+        if (existsYn.equals("N")) {
+            int authNumber = userInfoService.getEmailSend(rDTO).authNumber();
+            log.info("authNumber : " + authNumber);
+
+            rDTO = UserInfoDTO.builder().authNumber(authNumber).existsYn(existsYn).build();
+        }
+
+        log.info(this.getClass().getName() + ".getEmailOnlyExists End!!");
+
+        return rDTO;
+    }
+
+
+
+    /**
      * 회원가입 로직 처리
      */
     @ResponseBody
@@ -86,15 +113,15 @@ public class UserInfoController {
         String userName = CmmUtil.nvl(request.getParameter("userName"));
         String password = CmmUtil.nvl(request.getParameter("password"));
         String email = CmmUtil.nvl(request.getParameter("email"));
-        String addr1 = CmmUtil.nvl(request.getParameter("addr1"));
-        String addr2 = CmmUtil.nvl(request.getParameter("addr2"));
+        String allergy = CmmUtil.nvl(request.getParameter("allergy"));
+        String nickname = CmmUtil.nvl(request.getParameter("nickname"));
 
         log.info("userId : " + userId);
         log.info("userName : " + userName);
         log.info("password : " + password);
         log.info("email : " + email);
-        log.info("addr1 : " + addr1);
-        log.info("addr2 : " + addr2);
+        log.info("allergy : " + allergy);
+        log.info("nickname : " + nickname);
 
         // 웹 (회원정보 입력화면)에서 받는 정보를 저장할 변수를 메모리에 올리기
         UserInfoDTO pDTO = UserInfoDTO.builder()
@@ -102,8 +129,8 @@ public class UserInfoController {
                 .userName(userName)
                 .password(EncryptUtil.encHashSHA256(password))
                 .email(EncryptUtil.encAES128CBC(email))
-                .addr1(addr1)
-                .addr2(addr2)
+                .allergy(allergy)
+                .nickname(nickname)
                 .regId(userId)
                 .chgId(userId)
                 .build();
@@ -206,7 +233,7 @@ public class UserInfoController {
 
         log.info(this.getClass().getName() + ".user/loginSuccess End!");
 
-        return "user/loginSuccess";
+        return "/page/main";
     }
 
     /**
@@ -227,5 +254,78 @@ public class UserInfoController {
         log.info(this.getClass().getName() + "logout End!");
 
         return dto;
+    }
+
+    /**
+     * 아이디 찾기
+     */
+    @ResponseBody
+    @PostMapping(value = "searchId")
+    public UserInfoDTO searchUserId(HttpServletRequest request) throws Exception{
+
+        log.info(this.getClass().getName() + ".user/searchUserId Start!");
+
+        int res = 0;
+
+        String userName = CmmUtil.nvl(request.getParameter("userName"));
+        String email = CmmUtil.nvl(request.getParameter("email"));
+
+        log.info("userName : " + userName);
+        log.info("email : " + email);
+
+
+        UserInfoDTO pDTO = UserInfoDTO.builder().userName(userName).email(email).build();
+
+        UserInfoDTO rDTO = Optional.ofNullable(userInfoService.getEmailExists(pDTO))
+                .orElseGet(() -> UserInfoDTO.builder().build());
+
+
+        log.info(this.getClass().getName() + ".user/searchUserId End!");
+
+        return rDTO;
+    }
+
+    @GetMapping(value = "searchUserId")
+    public String searchId() {
+        log.info(this.getClass().getName() + ".searchId Start!");
+
+        log.info(this.getClass().getName() + ".searchId End!");
+
+        return "user/searchUserId";
+    }
+
+    @ResponseBody
+    @PostMapping(value="changePassword")
+    public MsgDTO changePassword(HttpServletRequest request) throws Exception {
+
+        log.info(this.getClass().getName() + ".user/changePassword Start!");
+
+        int res = 0;
+
+        String userName = CmmUtil.nvl(request.getParameter("userName"));
+        String userId = CmmUtil.nvl(request.getParameter("userId"));
+        String password = CmmUtil.nvl(request.getParameter("password"));
+
+        log.info("userName : " + userName);
+        log.info("userId : " + userId);
+        log.info("password : " + password);
+
+        UserInfoDTO pDTO = UserInfoDTO.builder().userName(userName).userId(userId).password(password).build();
+
+        MsgDTO dto = Optional.ofNullable(userInfoService.getUserNameExists(pDTO))
+                .orElseGet(() -> MsgDTO.builder().build());
+
+        log.info(this.getClass().getName() + ".user/changePassword End!");
+
+        return dto;
+    }
+
+    @GetMapping(value = "searchPassword")
+    public String searchPassword() {
+        log.info(this.getClass().getName() + ".searchPassword Start!");
+
+        log.info(this.getClass().getName() + ".searchPassword End!");
+
+        return "user/searchPassword";
     }
 }
