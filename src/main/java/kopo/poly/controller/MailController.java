@@ -39,7 +39,7 @@ public class MailController {
         String msg = ""; // 발송 결과 메시지
 
         // 웹 URL로부터 전달받는 값들
-        String to_mail = CmmUtil.nvl(request.getParameter("to_mail"));
+        String to_mail = CmmUtil.nvl(request.getParameter("email"));
         String title = CmmUtil.nvl(request.getParameter("title"));
         String contents = CmmUtil.nvl(request.getParameter("contents"));
 
