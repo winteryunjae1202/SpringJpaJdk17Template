@@ -70,7 +70,7 @@ public class UserInfoController {
      */
     @ResponseBody
     @PostMapping(value = "getEmailOnlyExists")          // 이메일 중복찾기
-    public UserInfoDTO getEmailExists(HttpServletRequest request) throws Exception {
+    public UserInfoDTO getEmailOnlyExists(HttpServletRequest request) throws Exception {
 
         log.info(this.getClass().getName() + ".getEmailOnlyExists Start!");
 
@@ -80,12 +80,13 @@ public class UserInfoController {
 
         UserInfoDTO pDTO = UserInfoDTO.builder().email(EncryptUtil.encAES128CBC(email)).build();
 
-        UserInfoDTO rDTO = Optional.ofNullable(userInfoService.getEmailOnlyExists(pDTO)).orElseGet(() -> UserInfoDTO.builder().build());
+        UserInfoDTO rDTO = Optional.ofNullable(userInfoService.getEmailOnlyExists(pDTO))
+                .orElseGet(() -> UserInfoDTO.builder().build());
 
         String existsYn = rDTO.existsYn();
 
         if (existsYn.equals("N")) {
-            int authNumber = userInfoService.getEmailSend(rDTO).authNumber();
+            int authNumber = userInfoService.getEmailSend(pDTO).authNumber();
             log.info("authNumber : " + authNumber);
 
             rDTO = UserInfoDTO.builder().authNumber(authNumber).existsYn(existsYn).build();
@@ -233,7 +234,7 @@ public class UserInfoController {
 
         log.info(this.getClass().getName() + ".user/loginSuccess End!");
 
-        return "/page/main";
+        return "page/main";
     }
 
     /**
@@ -261,9 +262,9 @@ public class UserInfoController {
      */
     @ResponseBody
     @PostMapping(value = "searchId")
-    public UserInfoDTO searchUserId(HttpServletRequest request) throws Exception{
+    public UserInfoDTO searchId(HttpServletRequest request) throws Exception{
 
-        log.info(this.getClass().getName() + ".user/searchUserId Start!");
+        log.info(this.getClass().getName() + ".user/searchId Start!");
 
         int res = 0;
 
@@ -280,20 +281,23 @@ public class UserInfoController {
                 .orElseGet(() -> UserInfoDTO.builder().build());
 
 
-        log.info(this.getClass().getName() + ".user/searchUserId End!");
+        log.info(this.getClass().getName() + ".user/searchId End!");
 
         return rDTO;
     }
 
     @GetMapping(value = "searchUserId")
     public String searchId() {
-        log.info(this.getClass().getName() + ".searchId Start!");
+        log.info(this.getClass().getName() + ".searchUserId Start!");
 
-        log.info(this.getClass().getName() + ".searchId End!");
+        log.info(this.getClass().getName() + ".searchUserId End!");
 
         return "user/searchUserId";
     }
 
+    /**
+     * 비밀번호 변경하기
+     */
     @ResponseBody
     @PostMapping(value="changePassword")
     public MsgDTO changePassword(HttpServletRequest request) throws Exception {
@@ -310,7 +314,7 @@ public class UserInfoController {
         log.info("userId : " + userId);
         log.info("password : " + password);
 
-        UserInfoDTO pDTO = UserInfoDTO.builder().userName(userName).userId(userId).password(password).build();
+        UserInfoDTO pDTO = UserInfoDTO.builder().userName(userName).userId(userId).password(EncryptUtil.encHashSHA256(password)).build();
 
         MsgDTO dto = Optional.ofNullable(userInfoService.getUserNameExists(pDTO))
                 .orElseGet(() -> MsgDTO.builder().build());
