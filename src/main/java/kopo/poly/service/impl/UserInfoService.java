@@ -1,5 +1,6 @@
 package kopo.poly.service.impl;
 
+import jakarta.transaction.Transactional;
 import kopo.poly.dto.MailDTO;
 import kopo.poly.dto.MsgDTO;
 import kopo.poly.dto.UserInfoDTO;
@@ -178,6 +179,7 @@ public class UserInfoService implements IUserInfoService {
         return rDTO;
     }
 
+    @Transactional
     @Override
     public UserInfoDTO getEmailOnlyExists(UserInfoDTO pDTO) throws Exception {
         log.info(this.getClass().getName() + ".getEmailOnlyExists Start!");
