@@ -2,9 +2,81 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알러지 검색 결과</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            margin: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .left {
+            flex: 1;
+            background-color: #77bb77;
+            padding: 20px;
+            border-radius: 8px;
+            color: white;
+        }
+        .right {
+            flex: 2;
+            padding: 20px;
+        }
+        .result-box {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background-color: #f0f0f0;
+        }
+        .result-box h4 {
+            margin: 0 0 10px;
+            color: #333;
+        }
+        .allergy-box {
+            border: 1px solid red;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #ffe6e6;
+            border-radius: 8px;
+        }
+        .allergy-box p {
+            margin: 0;
+            color: red;
+        }
+    </style>
 </head>
 <body>
+<h1> &nbsp; Allergy</h1>
+<hr style="border-width: 5px;"/>
+<br/>
+<div class="container">
+    <div class="left">
+        <h3>사용자 정보</h3>
+        <p><strong>이름:</strong> 사용자 이름</p>
+        <p><strong>알러지:</strong> 알러지 목록</p>
+    </div>
+    <div class="right">
+        <h3>알러지 검색 결과</h3>
+        <div class="result-box">
+            <h4>품목보고번호: 123456</h4>
+            <p><strong>제품명:</strong> 제품 A</p>
+            <div class="allergy-box">
+                <p><strong>알러지:</strong> 땅콩, 우유</p>
+            </div>
+            <p>알러지 검색 결과 <strong>알러지</strong>를 조심해야합니다.</p>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
