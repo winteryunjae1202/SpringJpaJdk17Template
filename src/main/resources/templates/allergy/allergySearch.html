@@ -12,9 +12,10 @@
         function search() {
             const query = document.getElementById('search-bar').value;
             if(query) {
-                alert("검색어: " + query);
+                alert("검색한 품목보고번호 : " + query);
+                location.href="searchAllergyResult";
             } else {
-                alert("품목코드번호를 입력하세요.");
+                alert("품목보고번호를 입력하세요.");
             }
 
 
@@ -26,10 +27,10 @@
 <hr style="border-width: 5px;"/>
 <br/>
 <div class="search-container">
-    <input type="text" id="search-bar" placeholder="품목코드번호를 입력하세요.">
+    <input type="text" id="search-bar" placeholder="품목보고번호를 입력하세요.">
     <button onclick="search()">검색하기</button>
-    </br></br>
-    <p>품목코드번호를 모르시나요? <a href="/allergy/searchResult" style="color:  #77bb77;">검색하기</a></p>
+    </br>
 </div>
+    <p>품목코드번호를 모르시나요? <a href="/allergy/searchItemResult" style="color:  #77bb77;">검색하기</a></p>
 </body>
 </html>
