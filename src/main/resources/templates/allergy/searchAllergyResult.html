@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:charset="UTF-8">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +11,7 @@
             margin: 0;
             padding: 0;
         }
+
         .container {
             display: flex;
             justify-content: space-between;
@@ -20,6 +21,7 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         .left {
             flex: 1;
             background-color: #77bb77;
@@ -27,10 +29,12 @@
             border-radius: 8px;
             color: white;
         }
+
         .right {
             flex: 2;
             padding: 20px;
         }
+
         .result-box {
             border: 1px solid #ddd;
             padding: 15px;
@@ -38,10 +42,12 @@
             border-radius: 8px;
             background-color: #f0f0f0;
         }
+
         .result-box h4 {
             margin: 0 0 10px;
             color: #333;
         }
+
         .allergy-box {
             border: 1px solid red;
             padding: 10px;
@@ -49,6 +55,7 @@
             background-color: #ffe6e6;
             border-radius: 8px;
         }
+
         .allergy-box p {
             margin: 0;
             color: red;
@@ -68,10 +75,12 @@
     <div class="right">
         <h3>알러지 검색 결과</h3>
         <div class="result-box">
-            <h4>품목보고번호: 123456</h4>
-            <p><strong>제품명:</strong> 제품 A</p>
+            <h4>품목보고번호 : <span th:text="${data}"></span></h4>
+            <p><strong>제품명 :</strong>
+                <span th:text="${rDTO.prdlstNm()}"></span></p>
             <div class="allergy-box">
-                <p><strong>알러지:</strong> 땅콩, 우유</p>
+                <p><strong>알러지 :</strong>
+                    <span th:text="${rDTO.allergy}"></span></p>
             </div>
             <p>알러지 검색 결과 <strong>알러지</strong>를 조심해야합니다.</p>
         </div>

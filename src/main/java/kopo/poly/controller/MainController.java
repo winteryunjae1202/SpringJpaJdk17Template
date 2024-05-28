@@ -1,11 +1,17 @@
 package kopo.poly.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import kopo.poly.dto.DataDTO;
+import kopo.poly.service.IDataService;
+import kopo.poly.util.CmmUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Optional;
 
 @Slf4j
 @RequestMapping(value = "/allergy")
@@ -13,34 +19,49 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class MainController {
 
+    private final IDataService dataService;
+
     /**
      * 알러지 검색 화면으로 이동
      */
     @GetMapping(value = "allergySearch")
     public String allergySearch() {
-
         log.info(this.getClass().getName() + ".allergy/allergySearch Start!");
 
         log.info(this.getClass().getName() + ".allergy/allergySearch End!");
 
         return "allergy/allergySearch";
+
     }
 
     /**
-     * 알러지 검색 결과 화면으로 이동
+     * 검색 결과 화면으로 이동
      */
     @GetMapping(value = "searchAllergyResult")
-    public String searchAllergyResult() {
+    public String searchAllergyResult(HttpServletRequest request, ModelMap model) throws Exception{
 
-        log.info(this.getClass().getName() + ".allergy/searchResult Start!");
+        log.info(this.getClass().getName() + ".searchAllergyResult Start!");
 
-        log.info(this.getClass().getName() + ".allergy/searchResult End!");
+        String data = CmmUtil.nvl(request.getParameter("data"));
 
-        return "searchAllergyResult";
+        log.info("data : " + data);
+
+        DataDTO rDTO = Optional.ofNullable(dataService.getProductApiList(data)).orElseGet(() -> DataDTO.builder().build());
+
+        model.addAttribute("rDTO", rDTO);
+        model.addAttribute("data", data);
+
+        log.info("rDTO : " + rDTO);
+
+        log.info(this.getClass().getName() + ".searchAllergyResult End!");
+
+        return "allergy/searchAllergyResult";
     }
 
+
+
     /**
-     * 알러지 검색 화면으로 이동
+     * 제품 검색 화면으로 이동
      */
     @GetMapping(value = "itemSearch")
     public String itemSearch() {
@@ -64,5 +85,6 @@ public class MainController {
 
         return "allergy/searchItemResult";
     }
+
 
 }
