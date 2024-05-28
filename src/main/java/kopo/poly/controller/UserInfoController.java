@@ -234,7 +234,7 @@ public class UserInfoController {
 
         log.info(this.getClass().getName() + ".user/loginSuccess End!");
 
-        return "page/main";
+        return "main";
     }
 
     /**

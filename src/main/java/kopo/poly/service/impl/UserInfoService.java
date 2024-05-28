@@ -140,7 +140,7 @@ public class UserInfoService implements IUserInfoService {
             res = 1;
         }
 
-        log.info(this.getClass().getName() + ".getUserLoginCheck End!");
+        log.info(this.getClass().getName() + ".getUser End!");
 
         return res;
     }
