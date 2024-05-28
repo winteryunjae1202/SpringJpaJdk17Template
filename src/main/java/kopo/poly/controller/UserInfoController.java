@@ -324,12 +324,4 @@ public class UserInfoController {
         return dto;
     }
 
-    @GetMapping(value = "searchPassword")
-    public String searchPassword() {
-        log.info(this.getClass().getName() + ".searchPassword Start!");
-
-        log.info(this.getClass().getName() + ".searchPassword End!");
-
-        return "user/searchPassword";
-    }
 }
