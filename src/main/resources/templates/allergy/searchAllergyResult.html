@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>알러지 검색 결과</title>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -69,8 +70,8 @@
 <div class="container">
     <div class="left">
         <h3>사용자 정보</h3>
-        <p><strong>이름:</strong> 사용자 이름</p>
-        <p><strong>알러지:</strong> 알러지 목록</p>
+        <p><strong>이름 : </strong> <span th:text="${pDTO.userName()}"></span></p>
+        <p><strong>알러지 : </strong> <span th:text="${pDTO.allergy()}"></span></p>
     </div>
     <div class="right">
         <h3>알러지 검색 결과</h3>
@@ -82,10 +83,24 @@
                 <p><strong>알러지 :</strong>
                     <span th:text="${rDTO.allergy}"></span></p>
             </div>
-            <p>알러지 검색 결과 <strong>알러지</strong>를 조심해야합니다.</p>
+            <p>알러지 검색 결과 일치하는 알러지가 <span id="result"></span></p>
+            <script th:inline="javascript">
+                /*<![CDATA[*/
+                const res = [[${res}]];
+                /*]]>*/
+
+                if (res === 1) {
+                    document.getElementById('result').innerHTML= "<strong>있습니다.</strong>"
+                    document.getElementById('result').style.color="#882323"
+                } else {
+                    document.getElementById('result').innerHTML="<strong>없습니다. 안전합니다.</strong>"
+                    document.getElementById('result').style.color="#2a8823"
+                }
+
+            </script>
         </div>
     </div>
 </div>
-
+<!--2018048003057-->
 </body>
 </html>

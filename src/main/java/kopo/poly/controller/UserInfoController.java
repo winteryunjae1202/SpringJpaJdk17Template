@@ -191,7 +191,7 @@ public class UserInfoController {
                 .userId(userId)
                 .password(EncryptUtil.encHashSHA256(password)).build();
 
-        // 로그인을 위해 아이디와 비밀번호가 일치하는지 확인하기 위한 usreInfoService 호출하기
+        // 로그인을 위해 아이디와 비밀번호가 일치하는지 확인하기 위한 userInfoService 호출하기
         int res = userInfoService.getUserLogin(pDTO);
 
         log.info("res : " + res);
@@ -225,17 +225,7 @@ public class UserInfoController {
         return dto;
     }
 
-    /**
-     * 로그인 성공 페이지 이동
-     */
-    @GetMapping(value = "loginSuccess")
-    public String loginSuccess() {
-        log.info(this.getClass().getName() + ".user/loginSuccess Start!");
 
-        log.info(this.getClass().getName() + ".user/loginSuccess End!");
-
-        return "main";
-    }
 
     /**
      * 로그아웃 처리하기

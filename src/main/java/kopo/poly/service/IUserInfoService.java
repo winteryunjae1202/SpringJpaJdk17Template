@@ -49,4 +49,10 @@ public interface IUserInfoService {
      * 이메일 조회
      */
     UserInfoDTO getEmailOnlyExists(UserInfoDTO pDTO) throws Exception;
+
+    /**
+     * 유저 정보 조회
+     */
+    UserInfoDTO getUserInfo(String userId) throws Exception;
+
 }

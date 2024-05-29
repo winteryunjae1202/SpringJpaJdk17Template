@@ -32,9 +32,6 @@ public class UserInfoEntity {
     @Column(name = "EMAIL", nullable = false)
     private String email;
 
-    @Column(name = "NICKNAME", nullable = false)
-    private String nickname;
-
     @Column(name = "ALLERGY", nullable = false)
     private String allergy;
 

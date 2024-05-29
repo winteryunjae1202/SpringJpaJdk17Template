@@ -86,7 +86,7 @@ public class UserInfoService implements IUserInfoService {
                     .userId(userId).userName(userName)
                     .password(password)
                     .email(email)
-                    .allergy(allergy).nickname(nickname)
+                    .allergy(allergy)
                     .regId(userId).regDt(DateUtil.getDateTime("yyyy-MM-dd hh:mm:ss"))
                     .chgId(userId).chgDt(DateUtil.getDateTime("yyyy-MM-dd hh:mm:ss"))
                     .build();
@@ -258,7 +258,6 @@ public class UserInfoService implements IUserInfoService {
         if (rEntity.isPresent()) {
             String email = rEntity.get().getEmail();
             String allergy = rEntity.get().getAllergy();
-            String nickname = rEntity.get().getNickname();
             String regDt = rEntity.get().getRegDt();
 
             // 회원정보 재 기입
@@ -266,7 +265,7 @@ public class UserInfoService implements IUserInfoService {
                     .userId(userId).userName(userName)
                     .password(password)
                     .email(email)
-                    .allergy(allergy).nickname(nickname)
+                    .allergy(allergy)
                     .regId(userId).regDt(regDt)
                     .chgId(userId).chgDt(DateUtil.getDateTime("yyyy-MM-dd hh:mm:ss"))
                     .build();
@@ -282,5 +281,27 @@ public class UserInfoService implements IUserInfoService {
         log.info(this.getClass().getName() + ".getUserNameExists End!");
 
         return dto;
+    }
+
+    @Override
+    public UserInfoDTO getUserInfo(String userId) throws Exception {
+
+        log.info(this.getClass().getName() + ".getUserInfo Start!");
+
+        Optional<UserInfoEntity> rEntity = userInfoRepository.findByUserId(userId);
+
+        UserInfoDTO rDTO;
+
+        if (rEntity.isPresent()) {
+            UserInfoEntity pEntity = rEntity.get();
+            rDTO = UserInfoDTO.builder().
+                    userId(pEntity.getUserId()).userName(pEntity.getUserName()).allergy(pEntity.getAllergy()).build();
+        } else {
+            rDTO = UserInfoDTO.builder().build();
+        }
+
+        log.info(this.getClass().getName() + ".getUserInfo End!");
+
+        return rDTO;
     }
 }

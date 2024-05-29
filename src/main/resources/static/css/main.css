@@ -25,6 +25,11 @@ nav ul li a {
     text-decoration: none;
 }
 
+nav ul button {
+    color: #282828;
+    text-decoration: none;
+}
+
 .welcome-message {
     text-align: center;
     margin-bottom: 10px;
