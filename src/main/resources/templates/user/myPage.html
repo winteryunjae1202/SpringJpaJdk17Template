@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        button {
+
+        }
+        .title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+        .info {
+            margin-bottom: 10px;
+        }
+        .info label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .info span {
+            display: block;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+<a href="/allergy/main">
+    <img src="/image/Allergy_logo.png">
+</a>
+<hr style="border-width: 5px;"/>
+<br/>
+<div class="container">
+    <div class="title">마이페이지</div>
+    <div class="info">
+        <label>사용자 이름</label>
+        <span th:text="${pDTO.userName()}"></span>
+    </div>
+    <div class="info">
+        <label>알러지</label>
+        <span th:text="${pDTO.allergy()}"></span>
+    </div>
+    <button type="button">수정하기</button>
+    <button type="button">탈퇴하기</button>
+</div>
+</body>
+</html>

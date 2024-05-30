@@ -208,11 +208,6 @@
                 f.email.focus();
                 return;
             }
-            if (f.nickname.value === "") {
-                alert("닉네임을 입력하세요.");
-                f.nickname.focus();
-                return;
-            }
             if (f.authNumber.value === "") {
                 alert("이메일 인증번호를 입력하세요.");
                 f.authNumber.focus();
@@ -243,7 +238,9 @@
     </script>
 </head>
 <body>
-<h1> &nbsp; Allergy</h1>
+<a href="/user/login">
+    <img src="/image/Allergy_logo.png">
+</a>
 <hr style="border-width: 5px;"/>
 <br/>
 <div class="vid-container">
@@ -265,8 +262,6 @@
                     <button id="btnEmail" type="button">인증번호 받기</button>
 
                     <input type="text" name="authNumber" id="authNumber" placeholder="인증번호를 입력해주세요.">
-
-                    <input type="text" name="nickname" id="nickname" placeholder="닉네임을 입력해주세요.">
 
                     <input type="text" name="userName" id="userName" placeholder="이름을 입력해주세요.">
 
