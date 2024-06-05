@@ -1,43 +1,58 @@
-div.minimalistBlack {
-    border: 3px solid #000000;
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+.board {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    text-align: left;
-    border-collapse: collapse;
 }
-.divTable.minimalistBlack .divTableCell, .divTable.minimalistBlack .divTableHead {
-    border: 1px solid #000000;
-    padding: 5px 4px;
+.board-header, .board-row {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
 }
-.divTable.minimalistBlack .divTableBody .divTableCell {
-    font-size: 13px;
-}
-.divTable.minimalistBlack .divTableHeading {
-    background: #CFCFCF;
-    background: -moz-linear-gradient(top, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
-    background: -webkit-linear-gradient(top, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
-    background: linear-gradient(to bottom, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
-    border-bottom: 3px solid #000000;
-}
-.divTable.minimalistBlack .divTableHeading .divTableHead {
-    font-size: 15px;
+.board-header {
+    background-color: #f4f4f4;
     font-weight: bold;
-    color: #000000;
+}
+.board-row:nth-child(even) {
+    background-color: #f9f9f9;
+}
+.board-cell {
+    flex: 1;
+    padding: 8px;
     text-align: left;
 }
-.minimalistBlack .tableFootStyle {
-    font-size: 14px;
-    font-weight: bold;
-    color: #000000;
-    border-top: 3px solid #000000;
+.board-cell-list {
+    flex: 1;
+    padding: 8px;
+    text-align: left;
 }
-.minimalistBlack .tableFootStyle {
-    font-size: 14px;
+.board-cell:first-child {
+    flex: 0 0 50px;
 }
-/* DivTable.com */
-.divTable{ display: table; }
-.divTableRow { display: table-row; }
-.divTableHeading { display: table-header-group;}
-.divTableCell, .divTableHead { display: table-cell;}
-.divTableHeading { display: table-header-group;}
-.divTableFoot { display: table-footer-group;}
-.divTableBody { display: table-row-group;}
+.board-cell:nth-child(2) {
+    flex: 3;
+}
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    gap: 10px;
+}
+.write-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+}
+.write-button:hover {
+    background-color: #45a049;
+}

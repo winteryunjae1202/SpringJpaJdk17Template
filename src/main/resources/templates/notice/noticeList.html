@@ -19,27 +19,26 @@
 </a>
 <hr style="border-width: 5px;"/>
 <br/>
-<div class="divTable minimalistBlack">
-    <div class="divTableHeading">
-        <div class="divTableRow">
-            <div class="divTableHead">순번</div>
-            <div class="divTableHead">제목</div>
-            <div class="divTableHead">조회수</div>
-            <div class="divTableHead">등록자</div>
-            <div class="divTableHead">등록일</div>
-        </div>
-    </div>
-    <div class="divTableBody">
-        <div class="divTableRow" th:each="dto: ${rList}">
-            <div class="divTableCell" th:if="${dto.noticeYn=='Y'}" th:text="공지사항"></div>
-            <div class="divTableCell" th:unless="${dto.noticeYn=='Y'}" th:text="${dto.noticeSeq}"></div>
-            <div class="divTableCell" th:text="${dto.title}" th:onclick="doDetail([[${dto.noticeSeq}]])"></div>
-            <div class="divTableCell" th:text="${dto.readCnt}"></div>
-            <div class="divTableCell" th:text="${dto.userId}"></div>
-            <div class="divTableCell" th:text="${dto.regDt}"></div>
-        </div>
+<div class="board">
+    <div class="board-header">
+        <div class="board-cell">순번</div>
+        <div class="board-cell">제목</div>
+        <div class="board-cell">조회수</div>
+        <div class="board-cell">글쓴이</div>
+        <div class="board-cell">등록일</div>
     </div>
 </div>
-<a href="/notice/noticeReg">글쓰기</a>
+<div class="board-row" th:each="dto: ${rList}">
+    <div class="board-cell" th:if="${dto.noticeYn=='Y'}" th:text="공지"></div>
+    <div class="board-cell" th:unless="${dto.noticeYn=='Y'}" th:text="${dto.noticeSeq}"></div>
+    <div class="board-cell" th:text="${dto.title}" th:onclick="doDetail([[${dto.noticeSeq}]])"></div>
+    <div class="board-cell" th:text="${dto.readCnt}"></div>
+    <div class="board-cell" th:text="${dto.userId}"></div>
+    <div class="board-cell" th:text="${dto.regDt}"></div>
+</div>
+<br/>
+<div class="button-container">
+    <button class="write-button" onclick="location.href='/notice/noticeReg'">글쓰기</button>
+</div>
 </body>
 </html>

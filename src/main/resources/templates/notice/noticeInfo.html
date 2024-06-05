@@ -82,39 +82,42 @@
 </a>
 <hr style="border-width: 5px;"/>
 <br/>
-<div class="divTable minimalistBlack">
+<div class="board">
     <div class="divTableBody">
-        <div class="divTableRow">
-            <div class="divTableCell">제목
+        <div class="board-row">
+            <div class="board-cell">제목
             </div>
-            <div class="divTableCell" th:text="${rDTO.title}"></div>
+            <div class="board-cell" th:text="${rDTO.title}"></div>
         </div>
-        <div class="divTableRow">
-            <div class="divTableCell">공지글 여부
+        <div class="board-row">
+            <div class="board-cell">공지글 여부
             </div>
-            <div class="divTableCell">
+            <div class="board-cell">
                 예<input type="radio" name="noticeYn" th:checked="${rDTO.noticeYn eq 'Y'}"/>
                 아니오<input type="radio" name="noticeYn" th:checked="${rDTO.noticeYn eq 'N'}"/>
             </div>
         </div>
-        <div class="divTableRow">
-            <div class="divTableCell">작성일</div>
-            <div class="divTableCell" th:text="${rDTO.regDt}"></div>
+        <div class="board-row">
+            <div class="board-cell">작성일</div>
+            <div class="board-cell" th:text="${rDTO.regDt}"></div>
         </div>
-        <div class="divTableRow">
-            <div class="divTableCell">조회수</div>
-            <div class="divTableCell" th:text="${rDTO.readCnt}"></div>
+        <div class="board-row">
+            <div class="board-cell">조회수</div>
+            <div class="board-cell" th:text="${rDTO.readCnt}"></div>
         </div>
-        <div class="divTableRow">
-            <div class="divTableCell">내용</div>
-            <div class="divTableCell" th:text="${rDTO.contents}"></div>
+        <div class="board-row">
+            <div class="board-cell">내용</div>
+            <div class="board-cell" th:text="${rDTO.contents}"></div>
         </div>
     </div>
 </div>
 <div>
-    <button id="btnEdit" type="button">수정</button>
-    <button id="btnDelete" type="button">삭제</button>
-    <button id="btnList" type="button">목록</button>
+    <div class="button-container">
+        <button class="write-button" id="btnEdit" type="button">수정</button>
+        <button class="write-button"  id="btnDelete" type="button">삭제</button>
+        <button class="write-button">댓글 달기</button>
+        <button class="write-button" id="btnList" type="button">목록</button>
+    </div>
 </div>
 </body>
 </html>
