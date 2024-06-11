@@ -55,4 +55,14 @@ public interface IUserInfoService {
      */
     UserInfoDTO getUserInfo(String userId) throws Exception;
 
+    /**
+     * 회원 정보 수정
+     */
+    int updateUserInfo(UserInfoDTO pDTO) throws Exception;
+
+    /**
+     * 회원 탈퇴
+     */
+    void deleteUserInfo (UserInfoDTO pDTO) throws Exception;
+
 }

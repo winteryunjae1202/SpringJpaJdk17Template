@@ -68,7 +68,6 @@ public class UserInfoService implements IUserInfoService {
         String password = CmmUtil.nvl(pDTO.password());
         String email = CmmUtil.nvl(pDTO.email());
         String allergy = CmmUtil.nvl(pDTO.allergy());
-        String nickname = CmmUtil.nvl(pDTO.nickname());
 
         log.info("pDTO : " + pDTO);
 
@@ -303,5 +302,51 @@ public class UserInfoService implements IUserInfoService {
         log.info(this.getClass().getName() + ".getUserInfo End!");
 
         return rDTO;
+    }
+
+    @Override
+    public int updateUserInfo(UserInfoDTO pDTO) throws Exception {
+
+        log.info(this.getClass().getName() + ".updateUserInfo Start!");
+
+        String userId = pDTO.userId();
+
+        int res = 0;
+
+        Optional<UserInfoEntity> rEntity = userInfoRepository.findByUserId(userId);
+
+        if(rEntity.isPresent()){
+
+            String userName = pDTO.userName();
+            String email = EncryptUtil.encAES128CBC(pDTO.email());
+
+            log.info("userId : " + userId);
+            log.info("userName : " + userName);
+            log.info("email : " + email);
+
+            // 회원정보 DB에 저장
+            userInfoRepository.updateUserInfo(userId,email,userName);
+
+            res = 1;
+
+        }
+
+        log.info(this.getClass().getName() + ".updateUserInfo END!");
+
+        return res;
+
+    }
+
+    @Override
+    public void deleteUserInfo(UserInfoDTO pDTO) throws Exception {
+        log.info(this.getClass().getName() + ".deleteUserInfo Start!");
+
+        String userId = pDTO.userId();
+
+        log.info("userId : " + userId);
+
+
+
+        log.info(this.getClass().getName() + ".deleteUserInfo End!");
     }
 }

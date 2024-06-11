@@ -116,14 +116,12 @@ public class UserInfoController {
         String password = CmmUtil.nvl(request.getParameter("password"));
         String email = CmmUtil.nvl(request.getParameter("email"));
         String allergy = CmmUtil.nvl(request.getParameter("allergy"));
-        String nickname = CmmUtil.nvl(request.getParameter("nickname"));
 
         log.info("userId : " + userId);
         log.info("userName : " + userName);
         log.info("password : " + password);
         log.info("email : " + email);
         log.info("allergy : " + allergy);
-        log.info("nickname : " + nickname);
 
         // 웹 (회원정보 입력화면)에서 받는 정보를 저장할 변수를 메모리에 올리기
         UserInfoDTO pDTO = UserInfoDTO.builder()
@@ -132,7 +130,6 @@ public class UserInfoController {
                 .password(EncryptUtil.encHashSHA256(password))
                 .email(EncryptUtil.encAES128CBC(email))
                 .allergy(allergy)
-                .nickname(nickname)
                 .regId(userId)
                 .chgId(userId)
                 .build();
@@ -318,13 +315,52 @@ public class UserInfoController {
     public String myPage(HttpSession session, ModelMap model) throws Exception {
         log.info(this.getClass().getName() + ".myPage Start!");
 
-        String userId = (String) session.getAttribute("SS_USER_ID");
-        UserInfoDTO pDTO = userInfoService.getUserInfo(userId);
+        String userId = (String)session.getAttribute("SS_USER_ID");
 
-        model.addAttribute("pDTO", pDTO);
+        if(userId != null) {
+            UserInfoDTO pDTO = userInfoService.getUserInfo(userId);
 
+            model.addAttribute("pDTO", pDTO);
+        } else {
+            return "/user/login";
+        }
         log.info(this.getClass().getName() + ".myPage End!");
 
         return "/user/myPage";
+    }
+
+    @GetMapping(value="userInfoEdit")
+    public String userInfoEdit(HttpSession session, ModelMap model) throws Exception {
+        log.info(this.getClass().getName() + ".userInfoEdit Start!");
+
+        String userId = (String) session.getAttribute("SS_USER_ID");
+
+        if(userId != null) {
+            UserInfoDTO pDTO = userInfoService.getUserInfo(userId);
+
+            model.addAttribute("pDTO", pDTO);
+        } else {
+            return "/user/login";
+        }
+        log.info(this.getClass().getName() + ".userInfoEdit End!");
+
+        return "/user/userInfoEdit";
+    }
+
+    @GetMapping(value="withDraw")
+    public String withDraw(HttpSession session, ModelMap model) throws Exception {
+        log.info(this.getClass().getName() + ".withDraw Start!");
+
+        String userId = (String) session.getAttribute("SS_USER_ID");
+
+        if (userId != null) {
+
+        } else {
+            return "/user/login";
+        }
+
+        log.info(this.getClass().getName() + ".withDraw End!");
+
+        return "/user/withDraw";
     }
 }
