@@ -2,11 +2,70 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>품목보고번호 찾기 결과</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        .results-container {
+            width: 80%;
+            max-width: 600px;
+            text-align: left;
+            margin: 0 auto;
+        }
+
+        .result-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .result-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
 <a href="/allergy/main">
     <img src="/image/Allergy_logo.png">
 </a>
+<hr style="border-width: 5px;"/>
+<br/>
+<div class="results-container" id="resultsContainer">
+    <div class="result-item" id="resultItem">
+        <p>Search result 1: Example text that can be copied.</p>
+        <button class="copy-button" onclick="copyText(this)">복사하기</button>
+    </div>
+</div>
+<script>
+    function copyText(button) {
+        const textToCopy = button.parentElement.querySelector('p').innerText;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            alert('검색결과가 복사되었습니다!');
+            window.location.href='/allergy/allergySearch';
+        }).catch(err => {
+            console.error('복사에 실패했습니다 : ', err);
+        });
+    }
+</script>
 </body>
 </html>

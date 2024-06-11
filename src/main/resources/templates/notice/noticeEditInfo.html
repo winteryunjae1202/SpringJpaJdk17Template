@@ -18,7 +18,8 @@
         //글자 길이 바이트 단위로 체크하기(바이트값 전달)
         function calBytes(str) {
             let tcount = 0;
-            let tmpStr = String(str);            let strCnt = tmpStr.length;
+            let tmpStr = String(str);
+            let strCnt = tmpStr.length;
             let onechar;
             for (let i = 0; i < strCnt; i++) {
                 onechar = tmpStr.charAt(i);
@@ -77,11 +78,12 @@
                     data: $("#f").serialize(), // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기
                     success: function (json) { // /notice/noticeUpdate 호출이 성공했다면..
                         alert(json.msg); // 메시지 띄우기
-                        // location.href = "/notice/noticeList"; // 공지사항 리스트 이동
+                        location.href = "/notice/noticeList"; // 공지사항 리스트 이동
                     }
                 }
             )
         }
+
     </script>
 </head>
 <body>
@@ -92,39 +94,39 @@
 <br/>
 <form name="f" id="f">
     <input type="hidden" name="nSeq" th:value="${rDTO.noticeSeq}"/>
-    <div class="divTable minimalistBlack">
-        <div class="divTableBody">
-            <div class="divTableRow">
-                <div class="divTableCell">제목</div>
-                <div class="divTableCell">
-                    <input type="text" name="title" maxlength="100" th:value="${rDTO.title}"
-                           style="width: 95%"/>
-                </div>
+    <div class="board">
+
+        <div class="board-row">
+            <div class="board-cell">제목</div>
+            <div class="board-cell">
+                <input type="text" name="title" maxlength="100" th:value="${rDTO.title}"
+                       style="width: 95%"/>
             </div>
-            <div class="divTableRow">
-                <div class="divTableCell">공지글 여부</div>
-                <div class="divTableCell">
-                    예<input type="radio" name="noticeYn" value="Y" th:checked="${rDTO.noticeYn eq 'Y'}"/>
-                    아니오<input type="radio" name="noticeYn" value="N" th:checked="${rDTO.noticeYn eq 'N'}"/>
-                </div>
+        </div>
+        <div class="board-row">
+            <div class="board-cell">공지글 여부</div>
+            <div class="board-cell">
+                예<input type="radio" name="noticeYn" value="Y" th:checked="${rDTO.noticeYn eq 'Y'}"/>
+                아니오<input type="radio" name="noticeYn" value="N" th:checked="${rDTO.noticeYn eq 'N'}"/>
             </div>
-            <div class="divTableRow">
-                <div class="divTableCell">조회수</div>
-                <div class="divTableCell" th:text="${rDTO.readCnt}">
-                </div>
+        </div>
+        <div class="board-row">
+            <div class="board-cell">조회수</div>
+            <div class="board-cell" th:text="${rDTO.readCnt}">
             </div>
-            <div class="divTableRow">
-                <div class="divTableCell">내용</div>
-                <div class="divTableCell">
+        </div>
+        <div class="board-row">
+            <div class="board-cell">내용</div>
+            <div class="board-cell">
                     <textarea name="contents"
                               style="width: 95%; height: 400px" th:text="${rDTO.contents}"></textarea>
-                </div>
             </div>
         </div>
     </div>
-    <div>
-        <button id="btnSend" type="button">수정</button>
-        <button type="reset">다시 작성</button>
+
+    <div class="button-container">
+        <button class="write-button" id="btnSend" type="button">수정</button>
+        <button class="write-button" type="reset">다시 작성</button>
     </div>
 </form>
 </body>

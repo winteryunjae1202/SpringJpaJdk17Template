@@ -235,7 +235,7 @@ public class NoticeController {
         MsgDTO dto = null; // 결과 메시지 구조
 
         try {
-            String userId = CmmUtil.nvl((String) session.getAttribute("SESSION_USER_ID")); // 아이디
+            String userId = CmmUtil.nvl((String) session.getAttribute("SS_USER_ID")); // 아이디
             String nSeq = CmmUtil.nvl(request.getParameter("nSeq")); // 글번호(PK)
             String title = CmmUtil.nvl(request.getParameter("title")); // 제목
             String noticeYn = CmmUtil.nvl(request.getParameter("noticeYn")); // 공지글 여부

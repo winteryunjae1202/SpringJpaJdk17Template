@@ -7,10 +7,11 @@
     <link rel="stylesheet" href="/css/table.css"/>
     <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
     <script th:inline="javascript">
-        /*<![CDATA[*/
-        const session_user_id = [[${session.SESSION_USER_ID}]]; // Controller에서 받은 세션에 저장된 값
-        const userId = [[${rDTO.userId}]]; // 공지사항 게시글 작성자 아이디
+
+        const session_user_id = [[${session.SS_USER_ID}]]; // Controller에서 받은 세션에 저장된 값
+        const user_id = [[${rDTO.userId}]]; // 게시글 작성자 아이디
         const nSeq = [[${rDTO.noticeSeq}]]; // 현재 글번호, 자바에서 받을 변수들은 자바스크립트 변수로 저장하면 편함
+
 
         // HTML로딩이 완료되고, 실행됨
         $(document).ready(function () {
@@ -32,7 +33,7 @@
 
         //수정하기
         function doEdit() {
-            if (session_user_id === userId) {
+            if (session_user_id === user_id) {
                 location.href = "/notice/noticeEditInfo?nSeq=" + nSeq;
 
             } else if (session_user_id === "") {
@@ -46,7 +47,7 @@
 
         //삭제하기
         function doDelete() {
-            if (session_user_id === userId) {
+            if (session_user_id === user_id) {
                 if (confirm("작성한 글을 삭제하시겠습니까?")) {
 
                     // Ajax 호출해서 글 삭제하기
@@ -73,7 +74,7 @@
             }
         }
 
-        /*]]>*/
+
     </script>
 </head>
 <body>
@@ -83,42 +84,38 @@
 <hr style="border-width: 5px;"/>
 <br/>
 <div class="board">
-    <div class="divTableBody">
-        <div class="board-row">
-            <div class="board-cell">제목
-            </div>
-            <div class="board-cell" th:text="${rDTO.title}"></div>
+    <div class="board-row">
+        <div class="board-cell">제목
         </div>
-        <div class="board-row">
-            <div class="board-cell">공지글 여부
-            </div>
-            <div class="board-cell">
-                예<input type="radio" name="noticeYn" th:checked="${rDTO.noticeYn eq 'Y'}"/>
-                아니오<input type="radio" name="noticeYn" th:checked="${rDTO.noticeYn eq 'N'}"/>
-            </div>
+        <div class="board-cell" th:text="${rDTO.title}"></div>
+    </div>
+    <div class="board-row">
+        <div class="board-cell">작성자
         </div>
-        <div class="board-row">
-            <div class="board-cell">작성일</div>
-            <div class="board-cell" th:text="${rDTO.regDt}"></div>
-        </div>
-        <div class="board-row">
-            <div class="board-cell">조회수</div>
-            <div class="board-cell" th:text="${rDTO.readCnt}"></div>
-        </div>
-        <div class="board-row">
-            <div class="board-cell">내용</div>
-            <div class="board-cell" th:text="${rDTO.contents}"></div>
-        </div>
+        <div class="board-cell" th:text="${rDTO.userId}"></div>
+    </div>
+    <div class="board-row">
+        <div class="board-cell">작성일</div>
+        <div class="board-cell" th:text="${rDTO.regDt}"></div>
+    </div>
+    <div class="board-row">
+        <div class="board-cell">조회수</div>
+        <div class="board-cell" th:text="${rDTO.readCnt}"></div>
+    </div>
+    <div class="board-row">
+        <div class="board-cell">내용</div>
+        <div class="board-cell" th:text="${rDTO.contents}"></div>
     </div>
 </div>
-<div>
-    <div class="button-container">
-        <button class="write-button" id="btnEdit" type="button">수정</button>
-        <button class="write-button"  id="btnDelete" type="button">삭제</button>
-        <button class="write-button">댓글 달기</button>
-        <button class="write-button" id="btnList" type="button">목록</button>
-    </div>
+
+
+<div class="button-container">
+    <button class="write-button" id="btnEdit" type="button">수정</button>
+    <button class="write-button" id="btnDelete" type="button">삭제</button>
+    <button class="write-button" id="btnComment" type="button">댓글 달기</button>
+    <button class="write-button" id="btnList" type="button">목록</button>
 </div>
+
 </body>
 </html>
 
