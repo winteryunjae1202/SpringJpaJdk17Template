@@ -2,120 +2,144 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>사용자 정보 수정</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정보 수정</title>
     <style>
-        @import url(https://fonts.googleapis.com/css?family=Raleway|Varela+Round|Coda);
-        @import url(http://weloveiconfonts.com/api/?family=entypo);
-
-        [class*="entypo-"]:before {
-            font-family: 'entypo', sans-serif;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
         }
 
-        .title-pen {
-            color: #333;
-            font-family: "Coda", sans-serif;
-            text-align: center;
-        }
-        .title-pen span {
-            color: #55acee;
-        }
-
-        .user-profile {
-            margin: auto;
-            width: 25em;
-            height: 11em;
-            background: #fff;
-            border-radius: .3em;
-        }
-
-        .user-profile  .username {
-            margin: auto;
-            margin-top: -4.40em;
-            margin-left: 5.80em;
-            color: #4eb6b6;
-            font-size: 1.53em;
-            font-family: "Coda", sans-serif;
-            font-weight: bold;
-        }
-        .user-profile  .bio {
-            margin: auto;
-            display: inline-block;
-            margin-left: 10.43em;
-            color: #e76043;
-            font-size: .87em;
-            font-family: "varela round", sans-serif;
-        }
-        .user-profile > .description {
-            margin: auto;
-            margin-top: 1.35em;
-            margin-right: 4.43em;
-            width: 14em;
-            color: #4eb6b6;
-            font-size: .87em;
-            font-family: "varela round", sans-serif;
-        }
-        .user-profile > img.avatar {
-            padding: .7em;
-            margin-left: .3em;
-            margin-top: .3em;
-            height: 6.23em;
-            width: 6.23em;
-            border-radius: 18em;
-        }
-
-        .user-profile ul.data {
-            margin: 2em auto;
-            height: 3.70em;
-            background: #4eb6b6;
-            text-align: center;
-            border-radius: 0 0 .3em .3em;
-        }
-        .user-profile li {
+        .container {
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
             margin: 0 auto;
-            padding: 1.30em;
-            width: 33.33334%;
-            display: table-cell;
-            text-align: center;
         }
 
-        .user-profile span {
-            font-family: "varela round", sans-serif;
-            color: #4eb6b6;
-            white-space: nowrap;
-            font-size: 1.27em;
-            font-weight: bold;
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
         }
-        .user-profile span:hover {
-            color: #daebea;
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s;
+            display: block;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
         }
     </style>
+    <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        // HTML로딩이 완료되고, 실행됨
+        $(document).ready(function () {
+            // 버튼 클릭했을때, 발생되는 이벤트 생성함(onclick 이벤트와 동일함)
+            $("#btnSave").on("click", function () {
+                doSave(); // 사용자 정보 수정 실행
+            })
+
+            function doSave(){
+
+                let f = document.getElementById("f"); // form 태그
+
+                if (f.userName.value === "") {
+                    alert("이름을 입력하시기 바랍니다.");
+                    f.userName.focus();
+                    return;
+                }
+
+                $.ajax({
+                        url: "/user/userInfoEdit",
+                        type: "post", // 전송방식은 Post (get과 post 차이)
+                        dataType: "JSON", // 전송 결과는 JSON으로 받기
+                        data: $("#f").serialize(), // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기
+                        success: function (json) { // //user/userInfoUpdate 호출
+                            alert(json.msg); // 메시지 띄우기
+                            location.href = "/user/myPage"; // 마이페이지 이동
+                        }
+                    }
+                )
+            }
+        })
+    </script>
 </head>
 <body>
 <a href="/allergy/main">
-    <img src="/image/Allergy_logo.png">
+    <img src="/image/Allergy_logo.png" alt="Allergy Logo">
 </a>
 <hr style="border-width: 5px;"/>
 <br/>
-<h1 class="title-pen">마이 페이지</h1>
-<div class="user-profile">
-    <img class="avatar" src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTF_erFD1SeUnxEpvFjzBCCDxLvf-wlh9ZuPMqi02qGnyyBtPWdE-3KoH3s" alt="Ash" />
-    <div class="username"><span th:text="${pDTO.userName()}"></span></div>
-    <div class="description">
-        알러지 : <span th:text="${pDTO.allergy()}"></span>
+<div class="container">
+    <div class="header">
+        <h1>개인정보 수정</h1>
     </div>
-    <ul class="data">
-        <li>
-            <span class="entypo-heart"> 127</span>
-        </li>
-        <li>
-            <span class="entypo-eye"> 853</span>
-        </li>
-        <li>
-            <span class="entypo-user"> 311</span>
-        </li>
-    </ul>
-    <button type="button" id="btntoMain" onclick="location.href='/allergy/main'">메인페이지로</button>
-    <button type="button" id="btntoMypage" onclick="location.href='/user/myPage'">마이페이지로</button>
+    <form id="f">
+        <div class="form-group">
+            <label for="userName"><strong>사용자명</strong></label>
+            <input type="text" id="userName" name="userName" th:value="${pDTO.userName()}">
+        </div>
+
+        <div class="form-group">
+            <label for="allergy"><strong>알러지 정보</strong><br/><p>* 알러지가 여러개일 경우 공백을 사용하지 않고 ,로만 구분해주세요. *</p></label>
+            <input type="text" id="allergy" name="allergy" th:value="${pDTO.allergy()}">
+        </div>
+        <br/>
+        <button type="submit" id="btnSave">저장하기</button>
+    </form>
 </div>
 </body>
 </html>

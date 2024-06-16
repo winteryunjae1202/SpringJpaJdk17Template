@@ -240,7 +240,7 @@ public class UserInfoController {
         // 결과 메시지 전달하기
         MsgDTO dto = MsgDTO.builder().result(1).msg("로그아웃하였습니다.").build();
 
-        log.info(this.getClass().getName() + "logout End!");
+        log.info(this.getClass().getName() + ".logout End!");
 
         return dto;
     }
@@ -329,6 +329,10 @@ public class UserInfoController {
         return "/user/myPage";
     }
 
+
+    /**
+     * 유저 정보 수정 페이지로 이동
+     */
     @GetMapping(value="userInfoEdit")
     public String userInfoEdit(HttpSession session, ModelMap model) throws Exception {
         log.info(this.getClass().getName() + ".userInfoEdit Start!");
@@ -346,6 +350,139 @@ public class UserInfoController {
 
         return "/user/userInfoEdit";
     }
+
+
+    /**
+     * 유저 정보 수정
+     */
+    @ResponseBody
+    @PostMapping(value = "updateUserInfo")
+    public MsgDTO userInfoUpdate(HttpServletRequest request, HttpSession session) throws Exception {
+
+        log.info(this.getClass().getName() + ".updateUserInfo Start!");
+
+        String msg;
+
+        String userId = CmmUtil.nvl((String)session.getAttribute("SS_USER_ID"));
+        String userName = CmmUtil.nvl(request.getParameter("userName"));
+        String allergy = CmmUtil.nvl(request.getParameter("allergy"));
+
+
+        log.info("userId : " + userId);
+        log.info("userName : " + userName);
+        log.info("allergy : " + allergy);
+
+
+        UserInfoDTO pDTO = UserInfoDTO.builder()
+                .userId(userId)
+                .userName(userName)
+                .allergy(allergy)
+                .build();
+
+        int res = userInfoService.updateUserInfo(pDTO);
+
+        log.info("회원 정보 수정 결과(res) : " + res);
+
+        if (res == 1) {
+            msg = "회원 정보 수정되었습니다..";
+
+        } else {
+
+            msg = "오류로 인해 회원 정보 수정에 실패했습니다.";
+
+        }
+
+        MsgDTO dto = MsgDTO.builder().result(res).msg(msg).build();
+
+        log.info(this.getClass().getName() + ".updateUserInfo End!");
+
+        return dto;
+    }
+
+    /**
+     * 비밀번호 변경 페이지 이동
+     */
+    @GetMapping(value = "myNewPassword")
+    public String myNewPassword(HttpSession session) {
+
+        log.info(this.getClass().getName() + ".user/myNewPassword Start!");
+
+        String userId = CmmUtil.nvl((String) session.getAttribute("SS_USER_ID"));
+
+        if (userId.length() > 0) {
+
+        } else {
+
+
+            return "redirect:/user/login";
+
+        }
+
+        return "user/myNewPassword";
+
+    }
+
+
+    /**
+     * 비밀번호 수정하기
+     */
+    @ResponseBody
+    @PostMapping(value = "myUpdatePassword")
+    public MsgDTO myUpdatePassword(HttpServletRequest request, HttpSession session) throws Exception {
+
+        log.info(this.getClass().getName() + ".myUpdatePassword Start!");
+
+        String userId = CmmUtil.nvl((String)session.getAttribute("SS_USER_ID"));
+
+        String msg = ""; // 웹에 보여줄 메세지
+        int result = 0;
+
+        if(userId.length() > 0) { //정상접근
+
+            String password = CmmUtil.nvl(request.getParameter("password")); //신규 비밀번호
+
+            log.info("password : " + password);
+
+            UserInfoDTO pDTO = UserInfoDTO.builder()
+                    .userId(userId)
+                    .password(EncryptUtil.encHashSHA256(password))
+                    .build();
+
+            int res = userInfoService.updatePassword(pDTO);
+
+
+            if(res > 0) {
+
+                msg = "비밀번호가 재설정되었습니다.";
+                result = 0;
+
+            } else {
+
+                msg = "비밀번호 변경에 문제가 생겼습니다. 다시 시도해주세요.";
+
+                result = 1;
+
+            }
+
+        } else { //비정상 접근
+
+            msg = "비정상 접근입니다.";
+            result = 2;
+
+        }
+
+        MsgDTO mDTO = MsgDTO.builder()
+                .msg(msg)
+                .result(result)
+                .build();
+
+        log.info("msg : " + msg);
+
+        log.info(this.getClass().getName() + ".myUpdatePassword End!");
+
+        return mDTO;
+    }
+
 
     @GetMapping(value="withDraw")
     public String withDraw(HttpSession session, ModelMap model) throws Exception {

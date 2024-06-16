@@ -319,19 +319,65 @@ public class UserInfoService implements IUserInfoService {
 
             String userName = pDTO.userName();
             String email = EncryptUtil.encAES128CBC(pDTO.email());
+            String allergy = pDTO.allergy();
 
             log.info("userId : " + userId);
             log.info("userName : " + userName);
             log.info("email : " + email);
 
             // 회원정보 DB에 저장
-            userInfoRepository.updateUserInfo(userId,email,userName);
+            userInfoRepository.updateUserInfo(userId,email,userName,allergy);
 
             res = 1;
 
         }
 
         log.info(this.getClass().getName() + ".updateUserInfo END!");
+
+        return res;
+
+    }
+
+    @Override
+    public int updatePassword(UserInfoDTO pDTO) throws Exception {
+
+        log.info(this.getClass().getName() + ".updatePassword Start!");
+
+        String userId = pDTO.userId();
+        String password = pDTO.password();
+        int res = 0;
+
+        Optional<UserInfoEntity> rEntity = userInfoRepository.findByUserId(userId);
+
+        if(rEntity.isPresent()){
+
+            String userName = rEntity.get().getUserName();
+            String email = rEntity.get().getEmail();
+            String allergy = rEntity.get().getAllergy();
+            String regDt = rEntity.get().getRegDt();
+
+            log.info("userId : " + userId);
+            log.info("userName : " + userName);
+            log.info("email : " + email);
+            log.info("allergy : " + allergy);
+            log.info("regDt : " + regDt);
+
+            UserInfoEntity pEntity = UserInfoEntity.builder()
+                    .userId(userId)
+                    .userName(userName)
+                    .password(password)
+                    .email(email)
+                    .allergy(allergy)
+                    .regDt(regDt)
+                    .build();
+
+            // 회원정보 DB에 저장
+            userInfoRepository.save(pEntity);
+
+            res = 1;
+        }
+
+        log.info(this.getClass().getName() + ".updatePassword END!");
 
         return res;
 
@@ -345,7 +391,8 @@ public class UserInfoService implements IUserInfoService {
 
         log.info("userId : " + userId);
 
-
+        // 데이터 수정하기
+        userInfoRepository.deleteById(userId);
 
         log.info(this.getClass().getName() + ".deleteUserInfo End!");
     }

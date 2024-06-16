@@ -2,91 +2,87 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이페이지</title>
     <style>
-        @import url(https://fonts.googleapis.com/css?family=Raleway|Varela+Round|Coda);
-        @import url(http://weloveiconfonts.com/api/?family=entypo);
-
-        [class*="entypo-"]:before {
-            font-family: 'entypo', sans-serif;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
         }
-
-        .title-pen {
-            color: #333;
-            font-family: "Coda", sans-serif;
-            text-align: center;
-        }
-        .title-pen span {
-            color: #55acee;
-        }
-
-        .user-profile {
-            margin: auto;
-            width: 25em;
-            height: 11em;
-            background: #fff;
-            border-radius: .3em;
-        }
-
-        .user-profile  .username {
-            margin: auto;
-            margin-top: -4.40em;
-            margin-left: 5.80em;
-            color: #4eb6b6;
-            font-size: 1.53em;
-            font-family: "Coda", sans-serif;
-            font-weight: bold;
-        }
-        .user-profile  .bio {
-            margin: auto;
-            display: inline-block;
-            margin-left: 10.43em;
-            color: #e76043;
-            font-size: .87em;
-            font-family: "varela round", sans-serif;
-        }
-        .user-profile > .description {
-            margin: auto;
-            margin-top: 1.35em;
-            margin-right: 4.43em;
-            width: 14em;
-            color: #4eb6b6;
-            font-size: .87em;
-            font-family: "varela round", sans-serif;
-        }
-        .user-profile > img.avatar {
-            padding: .7em;
-            margin-left: .3em;
-            margin-top: .3em;
-            height: 6.23em;
-            width: 6.23em;
-            border-radius: 18em;
-        }
-
-        .user-profile ul.data {
-            margin: 2em auto;
-            height: 3.70em;
-            background: #4eb6b6;
-            text-align: center;
-            border-radius: 0 0 .3em .3em;
-        }
-        .user-profile li {
+        .container {
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
             margin: 0 auto;
-            padding: 1.30em;
-            width: 33.33334%;
-            display: table-cell;
-            text-align: center;
         }
 
-        .user-profile span {
-            font-family: "varela round", sans-serif;
-            color: #4eb6b6;
-            white-space: nowrap;
-            font-size: 1.27em;
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .user-info, .allergies {
+            margin-bottom: 20px;
+        }
+
+        .info-title {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .info-content {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .info-content p {
+            margin: 5px 0;
+            color: #333;
+        }
+        .info-content .username {
+            color: #000000;
+            padding: 5px 10px;
+            border-radius: 5px;
             font-weight: bold;
         }
-        .user-profile span:hover {
-            color: #daebea;
+        .info-content .allergy {
+            background-color: #ffdddd;
+            color: #d9534f;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
         }
     </style>
 </head>
@@ -96,25 +92,25 @@
 </a>
 <hr style="border-width: 5px;"/>
 <br/>
-<h1 class="title-pen">마이 페이지</h1>
-<div class="user-profile">
-    <img class="avatar" src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTF_erFD1SeUnxEpvFjzBCCDxLvf-wlh9ZuPMqi02qGnyyBtPWdE-3KoH3s" alt="Ash" />
-    <div class="username"><span th:text="${pDTO.userName()}"></span></div>
-    <div class="description">
-        알러지 : <span th:text="${pDTO.allergy()}"></span>
+<div class="container">
+    <div class="header">
+        <h1>마이페이지</h1>
     </div>
-    <ul class="data">
-        <li>
-            <span class="entypo-heart"> 127</span>
-        </li>
-        <li>
-            <span class="entypo-eye"> 853</span>
-        </li>
-        <li>
-            <span class="entypo-user"> 311</span>
-        </li>
-    </ul>
-    <button type="button" id="btnEdit" onclick="location.href='/user/userInfoEdit'">수정하기</button>
+    <br/><br/>
+    <div class="user-info">
+        <div class="info-title">User Information</div>
+        <div class="info-content">
+            <p><strong>사용자명 : </strong> <span class="username" th:text="${pDTO.userName()}">333</span></p>
+        </div>
+    </div>
+    <div class="allergies">
+        <div class="info-title">Allergies</div>
+        <div class="info-content">
+            <p><strong>알러지 : <span class="allergy" th:text="${pDTO.allergy()}"></span></strong></p>
+        </div>
+    </div>
+    <button type="button" id="btnPwEdit" onclick="location.href='/user/myNewPassword'">비밀번호 수정하기</button>
+    <button type="button" id="btnEdit" onclick="location.href='/user/userInfoEdit'">정보 수정하기</button>
     <button type="button" id="btnWithdraw" onclick="location.href='/user/withDraw'">탈퇴하기</button>
 </div>
 </body>

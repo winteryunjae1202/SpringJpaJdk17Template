@@ -48,7 +48,7 @@ public interface UserInfoRepository extends JpaRepository<UserInfoEntity, String
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE USER_INFO A SET A.email = ?2, A.USER_NAME = ?3 WHERE A.USER_ID = ?1",
             nativeQuery = true)
-    int updateUserInfo(String userId, String email, String userName);
+    int updateUserInfo(String userId, String email, String userName, String allergy);
 
 }
 

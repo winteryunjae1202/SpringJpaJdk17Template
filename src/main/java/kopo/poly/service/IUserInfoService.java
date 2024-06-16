@@ -61,8 +61,13 @@ public interface IUserInfoService {
     int updateUserInfo(UserInfoDTO pDTO) throws Exception;
 
     /**
+     * 비밀번호 수정
+     */
+    int updatePassword(UserInfoDTO pDTO) throws Exception;
+
+    /**
      * 회원 탈퇴
      */
-    void deleteUserInfo (UserInfoDTO pDTO) throws Exception;
+    void deleteUserInfo(UserInfoDTO pDTO) throws Exception;
 
 }
