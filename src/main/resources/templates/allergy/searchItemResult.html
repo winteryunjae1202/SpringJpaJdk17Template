@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,7 +52,7 @@
 <br/>
 <div class="results-container" id="resultsContainer">
     <div class="result-item" id="resultItem">
-        <p th:text="${extractedText != null ? extractedText : '추출된 텍스트 없음'}"></p>
+        <p th:text="${data != null ? data : '추출된 텍스트 없음'}"></p>
         <button class="copy-button" onclick="copyText(this)">복사하기</button>
     </div>
 </div>

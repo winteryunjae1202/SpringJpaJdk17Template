@@ -102,8 +102,15 @@
                     return;
                 }
 
+                const allergyInput = f.allergy.value.trim();
+                if (allergyInput.includes(" ") || allergyInput.endsWith(",")) {
+                    alert("알러지 정보를 다시 입력해 주세요. (공백 없이 ,로만 구분하고, ,로 끝나지 않게 입력해 주세요)");
+                    location.reload();
+                    return;
+                }
+
                 $.ajax({
-                        url: "/user/userInfoEdit",
+                        url: "/user/updateUserInfo",
                         type: "post", // 전송방식은 Post
                         dataType: "JSON", // 전송 결과는 JSON으로 받기
                         data: $("#f").serialize(), // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기

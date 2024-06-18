@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Arrays;
 import java.util.List;
@@ -130,9 +131,15 @@ public class MainController {
      * 제품 검색 결과 화면으로 이동
      */
     @GetMapping(value = "searchItemResult")
-    public String searchItemResult() {
+    public String searchItemResult(HttpServletRequest request, ModelMap model) {
 
         log.info(this.getClass().getName() + ".allergy/searchItemResult Start!");
+
+        String data = CmmUtil.nvl(request.getParameter("result"));
+
+        model.addAttribute("data", data);
+
+        log.info("data : " + data);
 
         log.info(this.getClass().getName() + ".allergy/searchItemResult End!");
 

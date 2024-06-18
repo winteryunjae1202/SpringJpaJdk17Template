@@ -185,7 +185,7 @@ public class UserInfoService implements IUserInfoService {
 
         UserInfoDTO rDTO;
 
-        String email = EncryptUtil.encAES128CBC(CmmUtil.nvl(pDTO.email()));
+        String email = CmmUtil.nvl(pDTO.email());
 
         log.info("email : " + email);
 
@@ -318,15 +318,13 @@ public class UserInfoService implements IUserInfoService {
         if(rEntity.isPresent()){
 
             String userName = pDTO.userName();
-            String email = EncryptUtil.encAES128CBC(pDTO.email());
             String allergy = pDTO.allergy();
 
             log.info("userId : " + userId);
             log.info("userName : " + userName);
-            log.info("email : " + email);
 
             // 회원정보 DB에 저장
-            userInfoRepository.updateUserInfo(userId,email,userName,allergy);
+            userInfoRepository.updateUserInfo(userId,allergy,userName);
 
             res = 1;
 

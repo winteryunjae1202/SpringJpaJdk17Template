@@ -315,8 +315,11 @@ public class UserInfoController {
 
         UserInfoDTO pDTO = UserInfoDTO.builder().userName(userName).userId(userId).password(EncryptUtil.encHashSHA256(password)).build();
 
+
         MsgDTO dto = Optional.ofNullable(userInfoService.getUserNameExists(pDTO))
                 .orElseGet(() -> MsgDTO.builder().build());
+
+        userInfoService.updatePassword(pDTO);
 
         log.info(this.getClass().getName() + ".user/changePassword End!");
 

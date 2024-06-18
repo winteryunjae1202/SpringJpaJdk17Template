@@ -153,6 +153,15 @@
                 return;
             }
 
+            // 이메일에 '@'가 포함되어 있는지 확인
+            const emailValue = f.email.value.indexOf('@');
+            if (emailValue === -1) {
+                alert("유효한 이메일 주소를 입력하세요.");
+                f.email.value = ""; // 이메일 칸을 비움
+                f.email.focus();
+                return;
+            }
+
             $.ajax({
                     url: "/user/getEmailOnlyExists",
                     type: "post", // 전송방식은 Post
@@ -218,6 +227,17 @@
                 f.authNumber.focus();
                 return;
             }
+
+
+
+            const allergyInput = f.allergy.value.trim();
+            if (allergyInput.includes(" ") || allergyInput.endsWith(",")) {
+                alert("알러지 정보를 다시 입력해 주세요. (공백 없이 ,로만 구분하고, ,로 끝나지 않게 입력해 주세요)");
+                f.allergy.value="";
+                f.allergy.focus();
+                return;
+            }
+
             // Ajax 호출해서 회원가입하기
             $.ajax({
                     url: "/user/insertUserInfo",

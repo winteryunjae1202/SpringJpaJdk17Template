@@ -4,16 +4,19 @@ import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
+
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Controller
@@ -23,11 +26,11 @@ public class OcrController {
     private Tesseract tesseract;
 
     @PostMapping("/api/upload")
-    public ModelAndView uploadImage(@RequestParam("file") MultipartFile file, Model model) {
+    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file, Model model) {
 
         log.info(this.getClass().getName() + ".uploadImage Start!");
 
-        ModelAndView modelAndView = new ModelAndView();
+        String fourteenDigits = "";
 
         try {
             // MultipartFile을 File 객체로 변환
@@ -36,23 +39,31 @@ public class OcrController {
 
             // 이미지에서 텍스트 추출
             String extractedText = tesseract.doOCR(convFile);
-            log.info("extractedText : " + extractedText);
 
-            // 추출된 텍스트를 모델에 추가
-            model.addAttribute("extractedText", extractedText);
+            // 정규 표현식을 사용하여 숫자 추출
+            Pattern pattern = Pattern.compile("\\d{14}");
+            Matcher matcher = pattern.matcher(extractedText);
 
-            // 뷰 이름 설정
-            modelAndView.setViewName("allergy/searchItemResult"); // searchItemResult.html에 대한 뷰 이름
+
+            // 14자리의 연속된 숫자 찾기
+            if (matcher.find()) {
+                fourteenDigits = matcher.group();
+                log.info("14자리 연속된 숫자: " + fourteenDigits);
+
+            } else {
+                log.info("품목보고번호를 인식하지 못했습니다.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("품목보고번호를 인식하지 못했습니다.");
+            }
+
 
         } catch (IOException | TesseractException e) {
             e.printStackTrace();
 
-            modelAndView.setViewName("error");
-            modelAndView.addObject("errorMessage", "이미지 처리 중 오류가 발생했습니다."); // 오류 메시지 전달
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("오류가 발생했습니다.");
         }
 
         log.info(this.getClass().getName() + ".uploadImage End!");
 
-        return modelAndView;
+        return ResponseEntity.ok(fourteenDigits);
     }
 }

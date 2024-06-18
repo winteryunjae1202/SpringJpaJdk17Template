@@ -56,7 +56,7 @@
     <div id="imagePreview">
         <span>업로드 된 이미지 없음</span>
     </div>
-    <input type="file" id="fileInput" accept="image/*">
+    <input type="file" id="fileInput" accept=".jpg, .jpeg, .png">
     <br/>
     <button id="searchButton">품목보고번호 검색하기</button>
 </div>
@@ -90,15 +90,15 @@
                 method: 'POST',
                 body: formData
             })
-                .then(response => response.json())
-                .then(data => {
-                    const extractedText = data.text;
-                    const url = `/allergy/searchItemResult?result=${encodeURIComponent(extractedText)}`;
-                    window.location.href = url;
+                .then(response => response.text())
+                .then(a => {
+                    alert(a);
+                    location.href = "/allergy/searchItemResult?result=" + encodeURIComponent(a);
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
+
         } else {
             alert('파일을 선택하세요');
         }
