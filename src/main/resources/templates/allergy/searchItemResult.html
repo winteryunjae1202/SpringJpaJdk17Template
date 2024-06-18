@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Results</title>
+    <title>품목보고번호 검색 결과</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -52,7 +52,7 @@
 <br/>
 <div class="results-container" id="resultsContainer">
     <div class="result-item" id="resultItem">
-        <p>Search result 1: Example text that can be copied.</p>
+        <p th:text="${extractedText != null ? extractedText : '추출된 텍스트 없음'}"></p>
         <button class="copy-button" onclick="copyText(this)">복사하기</button>
     </div>
 </div>

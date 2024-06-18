@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오류 발생</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .error-message {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h2>오류가 발생하였습니다</h2>
+<p class="error-message" th:text="${errorMessage}">An error occurred.</p>
+</body>
+</html>

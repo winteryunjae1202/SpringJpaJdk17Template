@@ -104,10 +104,10 @@
 
                 $.ajax({
                         url: "/user/userInfoEdit",
-                        type: "post", // 전송방식은 Post (get과 post 차이)
+                        type: "post", // 전송방식은 Post
                         dataType: "JSON", // 전송 결과는 JSON으로 받기
                         data: $("#f").serialize(), // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기
-                        success: function (json) { // //user/userInfoUpdate 호출
+                        success: function (json) { // //user/userInfoEdit 호출
                             alert(json.msg); // 메시지 띄우기
                             location.href = "/user/myPage"; // 마이페이지 이동
                         }

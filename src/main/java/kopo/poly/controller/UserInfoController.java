@@ -224,6 +224,18 @@ public class UserInfoController {
     }
 
 
+    /**
+     * 비밀번호 찾기로 이동
+     */
+    @GetMapping(value="searchPassword")
+    public String searchPassword() {
+
+        log.info(this.getClass().getName() + ".searchPassword Start!");
+
+        log.info(this.getClass().getName() + ".searchPassword End!");
+
+        return "/user/searchPassword";
+    }
 
     /**
      * 로그아웃 처리하기
@@ -484,6 +496,9 @@ public class UserInfoController {
     }
 
 
+    /**
+     * 회원 탈퇴 페이지 이동
+     */
     @GetMapping(value="withDraw")
     public String withDraw(HttpSession session, ModelMap model) throws Exception {
         log.info(this.getClass().getName() + ".withDraw Start!");
@@ -492,6 +507,7 @@ public class UserInfoController {
 
         if (userId != null) {
 
+
         } else {
             return "/user/login";
         }
@@ -499,5 +515,54 @@ public class UserInfoController {
         log.info(this.getClass().getName() + ".withDraw End!");
 
         return "/user/withDraw";
+    }
+
+
+    /**
+     * 유저 정보 삭제
+     */
+    @ResponseBody
+    @PostMapping(value = "deleteUserInfo")
+    public MsgDTO userDelete(HttpSession session) {
+
+        log.info(this.getClass().getName() + ".userDelete Start!");
+
+        String msg = ""; // 메시지 내용
+        MsgDTO dto = null; // 결과 메시지 구조
+
+        try {
+            String userId = CmmUtil.nvl((String) session.getAttribute("SS_USER_ID")); // 글번호(PK)
+
+            log.info("userId : " + userId);
+
+            /*
+             * 값 전달은 반드시 DTO 객체를 이용해서 처리함 전달 받은 값을 DTO 객체에 넣는다.
+             */
+            UserInfoDTO pDTO = UserInfoDTO.builder()
+                    .userId(userId)
+                    .build();
+
+            // 게시글 삭제하기 DB
+            userInfoService.deleteUserInfo(pDTO);
+
+            session.invalidate();
+
+            msg = "탈퇴하였습니다.";
+
+        } catch (Exception e) {
+            msg = "실패하였습니다. : " + e.getMessage();
+            log.info(e.toString());
+            e.printStackTrace();
+
+        } finally {
+
+            // 결과 메시지 전달하기
+            dto = MsgDTO.builder().msg(msg).build();
+
+            log.info(this.getClass().getName() + ".userDelete End!");
+
+        }
+
+        return dto;
     }
 }

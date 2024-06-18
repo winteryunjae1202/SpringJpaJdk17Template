@@ -383,6 +383,9 @@ public class UserInfoService implements IUserInfoService {
 
     }
 
+    /**
+     * 회원 탈퇴
+     */
     @Override
     public void deleteUserInfo(UserInfoDTO pDTO) throws Exception {
         log.info(this.getClass().getName() + ".deleteUserInfo Start!");

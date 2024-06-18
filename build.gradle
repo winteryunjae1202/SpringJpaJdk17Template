@@ -31,6 +31,7 @@ dependencies {
     implementation 'org.ehcache:ehcache:3.10.0'
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     implementation 'org.json:json:20210307'
+    implementation 'net.sourceforge.tess4j:tess4j:4.5.5' // Tess4j 의존성 추가
     annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
     annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
     annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
