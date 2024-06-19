@@ -100,14 +100,14 @@ function doCInsert() {
         return;
     }
 
-    let noticeSeq = document.querySelector('span[name="noticeSeq"]').innerText;
+    let noticeSeq = document.querySelector('div[name="noticeSeq"]').innerText;
 
     console.log("content : " + content)
     console.log("noticeSeq : " + noticeSeq)
 
     if (session_user_id) {
 
-        // Ajax 호출해서 글 삭제하기
+        //
         $.ajax({
                 url: "/comment/commentInsert",
                 type: "post", // 전송방식은 Post
@@ -117,7 +117,7 @@ function doCInsert() {
                     "noticeSeq": noticeSeq
                 }, // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기
                 success:
-                    function (json) { // /notice/noticeDelete 호출이 성공했다면..
+                    function (json) { //  호출이 성공했다면..
                         alert(json.msg); // 메시지 띄우기
                         location.reload(); // 공지사항 리스트 이동
                     }
@@ -132,7 +132,7 @@ function doCInsert() {
     } else {
 
         alert("알 수 없는 오류가 발생했습니다.")
-        location.href = "/html/index";
+        location.href = "/allergy/main";
 
     }
 }
@@ -283,4 +283,21 @@ function getCommentSeq(dto) {
 function getCommentContent(dto) {
     // monthSales가 메서드일 경우 호출하고, 속성일 경우 그대로 반환합니다.
     return typeof dto.commentContents === 'function' ? dto.commentContents() : dto.commentContents;
+}
+
+// 글자 수 체크
+function calBytes(str) {
+    let tcount = 0;
+    let tmpStr = String(str);
+    let strCnt = tmpStr.length;
+    let onechar;
+    for (let i = 0; i < strCnt; i++) {
+        onechar = tmpStr.charAt(i);
+        if (escape(onechar).length > 4) {
+            tcount += 2;
+        } else {
+            tcount += 1;
+        }
+    }
+    return tcount;
 }

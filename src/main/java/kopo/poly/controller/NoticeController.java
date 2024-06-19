@@ -2,8 +2,10 @@ package kopo.poly.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import kopo.poly.dto.CommentDTO;
 import kopo.poly.dto.MsgDTO;
 import kopo.poly.dto.NoticeDTO;
+import kopo.poly.service.ICommentService;
 import kopo.poly.service.INoticeService;
 import kopo.poly.util.CmmUtil;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +39,7 @@ public class NoticeController {
     // @RequiredArgsConstructor 를 통해 메모리에 올라간 서비스 객체를 Controller에서 사용할 수 있게 주입함
     private final INoticeService noticeService;
 
+    private final ICommentService commentService;
     /**
      * 게시판 리스트 보여주기
      * <p>
@@ -182,6 +185,14 @@ public class NoticeController {
         // 조회된 리스트 결과값 넣어주기
         model.addAttribute("rDTO", rDTO);
 
+        CommentDTO cDTO = CommentDTO.builder()
+                .noticeSeq(Long.parseLong(nSeq))
+                .build();
+
+        List<CommentDTO> cList = Optional.ofNullable(commentService.getCommentList(cDTO))
+                .orElseGet(() -> new ArrayList<>());
+
+        model.addAttribute("cList", cList);
 
         log.info(this.getClass().getName() + ".noticeInfo End!");
 

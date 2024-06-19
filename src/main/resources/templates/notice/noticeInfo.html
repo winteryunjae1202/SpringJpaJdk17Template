@@ -27,6 +27,11 @@
 <br/>
 <div class="board">
     <div class="board-row">
+        <div class="board-cell">순번
+        </div>
+        <div class="board-cell" th:text="${rDTO.noticeSeq}" name="noticeSeq"></div>
+    </div>
+    <div class="board-row">
         <div class="board-cell">제목
         </div>
         <div class="board-cell" th:text="${rDTO.title}"></div>
@@ -46,7 +51,7 @@
     </div>
     <div class="board-row">
         <div class="board-cell">내용</div>
-        <div class="board-cell" th:text="${rDTO.contents}"></div>
+        <div class="board-cell" th:text="${rDTO.contents}" id="textContent"></div>
     </div>
 </div>
 
@@ -57,18 +62,14 @@
     <button class="write-button" id="btnList" type="button">목록</button>
 </div>
 
-<h5
-        class="my-3 text-xl font-semibold text-gray-700 dark:text-gray-200 comment-name"
->
-    댓글
-</h5>
+<h3>댓글</h3>
 <hr>
 <ul id="comments-list" class="comments-list">
     <li th:each="dto : ${cList}">
         <div class="comment-box" th:id="'comment'+${dto.commentSeq()}">
             <div class="comment-head">
-                <h6 class="comment-name by-user" name="cUserId" th:text="${dto.userId()}"></h6>
-                <div class="commentSeq-invisible" name="commentSeq" th:text="${dto.commentSeq()}"></div>
+                <h4 class="comment-name by-user" name="cUserId" th:text="${dto.userId()}"></h4>
+                <div class="commentSeq-invisible" name="commentSeq" th:text="${dto.commentSeq()}" style="display:none"></div>
                 <div class="comment-right">
                     <span class="func-inline" name="ChgDt" th:text="${dto.commentChgDt()}"></span>
                     <div class="func-inline" th:if="${session.SS_USER_ID}==${dto.userId()}">
@@ -88,20 +89,13 @@
 
 <hr>
 <div class="comment" th:if="${session.SS_USER_ID}">
-    <label class="commentLabel block mt-4 text-sm">
-        <textarea
-                class="block mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray commentInline"
-                id="cContent" name="content" style="height: 60px; width : 750px" rows="3"
+    <label>
+        <textarea id="cContent" name="content" style="height: 60px; width : 750px" rows="3"
                 placeholder="댓글 내용을 입력해주세요."></textarea>
-        <div class="px-6 my-4 commentInline">
-            <button
-                    id="btnCInst"
-                    class="commentButton items-left w-1/15 px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-                    type="button"
-            >
+        <div>
+            <button id="btnCInst" type="button">
                 <div class="w-full">
-                    <span class="px-4 py-3 text-sm font-semibold">댓글 쓰기</span>
-                    <span class="ml-2" aria-hidden="true">+</span>
+                    <span>댓글 쓰기</span>
                 </div>
             </button>
         </div>

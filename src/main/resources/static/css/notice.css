@@ -69,9 +69,11 @@ body {
 }
 
 .comment-box {
+    background-color: #fff;
     border: 1px solid #ddd;
     padding: 10px;
-    margin-bottom: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
 }
 
 .comment-head {
@@ -89,33 +91,60 @@ body {
     align-items: center;
 }
 
-.func-inline {
-    margin-left: 10px;
-}
-
 .comment_edit, .comment-del {
+    margin-left: 10px;
     cursor: pointer;
-    color: blue;
+    color: #007bff;
 }
 
 .comment_edit:hover, .comment-del:hover {
-    text-decoration: underline;
+    color: #0056b3;
 }
 
-.comment-content {
+.comments-list {
+    list-style: none;
+    padding: 0;
+}
+
+#cContent {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
     margin-top: 10px;
+    box-sizing: border-box;
 }
 
 .commentLabel {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
+    display: block;
+    width: 90%;
+    margin: 20px auto;
 }
 
 .commentInline {
+    display: flex;
+    justify-content: flex-end;
     margin-top: 10px;
 }
 
-.commentButton {
-    margin-top: 10px;
+.commentInline button {
+    background-color: #28a745;
+    color: white;
+    border-radius: 5px;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.commentInline button:hover {
+    background-color: #218838;
+}
+
+#btnCInst {
+    background-color: #28a745;
+    color: white;
+    border-radius: 5px;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
 }

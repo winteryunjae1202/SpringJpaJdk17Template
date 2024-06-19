@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>알러지 검색 결과</title>
+    <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -60,6 +61,20 @@
             margin: 0;
             color: red;
         }
+
+        .container button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 1px solid #4CAF50;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        .container button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -77,12 +92,12 @@
     <div class="right">
         <h3>알러지 검색 결과</h3>
         <div class="result-box">
-            <h4>품목보고번호 : <span th:text="${data}"></span></h4>
+            <h4>품목보고번호 : <span id="prdlstReportNo" th:text="${data}"></span></h4>
             <p><strong>제품명 :</strong>
-                <span th:text="${rDTO.prdlstNm()}"></span></p>
+                <span id="prdlstNm" th:text="${rDTO.prdlstNm()}"></span></p>
             <div class="allergy-box">
                 <p><strong>알러지 :</strong>
-                    <span th:text="${rDTO.allergy}"></span></p>
+                    <span id="allergy" th:text="${rDTO.allergy}"></span></p>
             </div>
             <p>알러지 검색 결과 일치하는 알러지가 <span id="result"></span></p>
             <script th:inline="javascript">
@@ -99,9 +114,53 @@
                 }
 
             </script>
+
+            <div class="button-container">
+                <button class="history-button" id="btnSave">검색 기록 저장</button>
+                <button class="main-page-button" onclick="window.location.href='/allergy/main'">메인페이지로 돌아가기</button>
+            </div>
+
         </div>
     </div>
 </div>
 <!--2018048003057 (품목보고번호)-->
 </body>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#btnSave").on("click", function() {
+            doSave();
+        })
+    })
+
+
+    function doSave() {
+
+        let prdlstReportNo = document.getElementById("prdlstReportNo").innerText;
+        let prdlstNm = document.getElementById("prdlstNm").innerText;
+        let allergy = document.getElementById("allergy").innerText;
+        $.ajax({
+            url:'/allergy/searchHistory',
+            type:'POST',
+            dataType:'JSON',
+            data:{"prdlstReportNo" : prdlstReportNo, "prdlstNm" : prdlstNm,
+                "allergy" : allergy, "result" : res},
+            success: function(json) {
+                if(json.result === 1) { // 성공
+                    alert("검색 기록이 저장되었습니다.");
+                    location.href="/allergy/allergySearch";
+                } else if(json.result === 2) {
+                    alert("정보가 등록된 제품입니다.");
+                    location.href="/allergy/allergySearch";
+                } else if(json.result === 3) {
+                    alert("로그인이 필요한 서비스 입니다.");
+                    location.href="/user/login";
+                } else {    // 실패
+                    alert("저장에 실패했습니다.");
+                }
+
+            }
+        })
+    }
+</script>
 </html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>알러지 검색 기록</title>
+    <link rel="stylesheet" href="/css/history.css"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .board {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        .board-header, .board-row {
+            display: flex;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            padding: 10px 0;
+        }
+
+        .board-header {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        .board-cell {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .board-cell:nth-child(2) {
+            flex: 2;
+        }
+
+        .button-container {
+            width: 90%;
+            margin: 20px auto;
+            text-align: right;
+        }
+
+        .button-container button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .button-container .main-page-button {
+            background-color: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<a href="/allergy/main">
+    <img src="/image/Allergy_logo.png">
+</a>
+<hr style="border-width: 5px;"/>
+<br/>
+<div class="board">
+    <div class="board-header">
+        <div class="board-cell">순번</div>
+        <div class="board-cell">제품명</div>
+        <div class="board-cell">품목보고번호</div>
+        <div class="board-cell">제품 알러지</div>
+        <div class="board-cell">알러지 일치 여부</div>
+    </div>
+    <div class="board-row" th:each="dto, iterStat : ${rList}">
+        <div class="board-cell" th:text="${iterStat.count}"></div>
+        <div class="board-cell" th:text="${dto.prdlstNm}"></div>
+        <div class="board-cell" th:text="${dto.prdlstReportNo}"></div>
+        <div class="board-cell" th:text="${dto.allergy}"></div>
+        <div class="board-cell" th:text="${dto.result ? '일치함' : '일치하지 않음'}"></div>
+    </div>
+</div>
+<br/>
+<div class="button-container">
+    <button class="main-page-button" onclick="location.href='/allergy/main'">메인페이지로 돌아가기</button>
+</div>
+</body>
+</html>

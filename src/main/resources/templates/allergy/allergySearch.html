@@ -24,17 +24,6 @@
             } else {
                 alert("품목보고번호를 입력하세요.");
             }
-            // $.ajax({
-            //     url: "/allergy/searchAllergyResult",
-            //     type: "post", // 전송방식은 Post
-            //     dataType: "JSON", // 전송 결과는 JSON으로 받기
-            //     data: {"data" : query }, // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기
-            //     success: function(json) {
-            //         let allergy = json.allergy
-            //         let prdlstNm = json.prdlstNm
-            //         let prdlstReportNo = json.prdlstReportNo
-            //     }
-            // })
 
         }
     </script>
@@ -49,6 +38,6 @@
     <input type="text" id="search-bar" placeholder="품목보고번호를 입력하세요.">
     <button id="btnSearch">검색하기</button>
 </div>
-<p>품목보고번호를 모르시나요? <a href="/allergy/itemSearch" style="color:  #77bb77;">검색하기</a></p>
+<p> 품목보고번호를 모르시나요? <a href="/allergy/itemSearch" style="color:  #77bb77;">검색하기</a></p>
 </body>
 </html>
