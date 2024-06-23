@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>알러지 검색 기록</title>
-    <link rel="stylesheet" href="/css/history.css"/>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -72,14 +71,12 @@
         <div class="board-cell">제품명</div>
         <div class="board-cell">품목보고번호</div>
         <div class="board-cell">제품 알러지</div>
-        <div class="board-cell">알러지 일치 여부</div>
     </div>
     <div class="board-row" th:each="dto, iterStat : ${rList}">
         <div class="board-cell" th:text="${iterStat.count}"></div>
         <div class="board-cell" th:text="${dto.prdlstNm}"></div>
         <div class="board-cell" th:text="${dto.prdlstReportNo}"></div>
         <div class="board-cell" th:text="${dto.allergy}"></div>
-        <div class="board-cell" th:text="${dto.result ? '일치함' : '일치하지 않음'}"></div>
     </div>
 </div>
 <br/>

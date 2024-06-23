@@ -9,19 +9,21 @@ import kopo.poly.dto.UserInfoDTO;
 import kopo.poly.service.IDataService;
 import kopo.poly.service.IMongoService;
 import kopo.poly.service.IUserInfoService;
-import kopo.poly.service.impl.MongoService;
-import kopo.poly.service.impl.UserInfoService;
 import kopo.poly.util.CmmUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequestMapping(value = "/allergy")
@@ -105,7 +107,10 @@ public class MainController {
 
             log.info("rDTO : " + rDTO);
 
-            List<String> prd_allergy_list = Arrays.asList(rDTO.allergy().split(","));      // 제품 알러지정보를 리스트 형태로 변환
+            List<String> prd_allergy_list = Arrays.stream(rDTO.allergy().split(","))
+                    .map(String::trim)
+                    .map(s -> s.endsWith(" 함유") ? s.substring(0, s.length() - 3) : s)
+                    .collect(Collectors.toList());
             List<String> user_allergy_list = Arrays.asList(pDTO.allergy().split(","));     // 사용자 알러지 정보를 리스트 형태로 변환
 
             log.info("prd_allergy_list : " + prd_allergy_list);

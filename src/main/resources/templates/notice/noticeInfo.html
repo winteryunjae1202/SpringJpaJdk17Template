@@ -68,7 +68,7 @@
     <li th:each="dto : ${cList}">
         <div class="comment-box" th:id="'comment'+${dto.commentSeq()}">
             <div class="comment-head">
-                <h4 class="comment-name by-user" name="cUserId" th:text="${dto.userId()}"></h4>
+                <h4 class="comment-name by-user" name="cUserId" th:text="'작성자 : ' + ${dto.userId()}"></h4>
                 <div class="commentSeq-invisible" name="commentSeq" th:text="${dto.commentSeq()}" style="display:none"></div>
                 <div class="comment-right">
                     <span class="func-inline" name="ChgDt" th:text="${dto.commentChgDt()}"></span>

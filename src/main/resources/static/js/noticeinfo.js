@@ -147,8 +147,14 @@ function doCDel(f) {
     // commentSeq(f)에 따른 div값들 조회
     let commentBox = document.getElementById('comment' + f);
 
-    // commentBox 내부에서 name이 "cUserId"인 요소 선택 및 값 가져오기
-    let cUserId = commentBox.querySelector('.comment-name[name="cUserId"]').innerText;
+    // commentBox 요소에서 .comment-name[name="cUserId"] 요소를 찾습니다.
+    let commentElement = commentBox.querySelector('.comment-name[name="cUserId"]');
+
+    // 해당 요소의 텍스트를 가져옵니다.
+    let fullText = commentElement.innerText;
+
+    // "작성자 : " 부분을 제거하고 나머지 텍스트를 cUserId에 저장합니다.
+    let cUserId = fullText.replace('작성자 : ', '');
 
 
     console.log("cUserId : " + cUserId)
@@ -180,7 +186,7 @@ function doCDel(f) {
         alert("로그인 하시길 바랍니다.");
 
     } else {
-        alert("본인이 작성한 댓글만 수정 가능합니다.");
+        alert("본인이 작성한 댓글만 삭제 가능합니다.");
     }
 }
 
@@ -217,8 +223,15 @@ function doCUpdate(commentSeq) {
     // commentSeq(f)에 따른 div값들 조회
     let commentBox = document.getElementById('comment' + commentSeq);
 
-    // commentBox 내부에서 name이 "cUserId"인 요소 선택 및 값 가져오기
-    let cUserId = commentBox.querySelector('.comment-name[name="cUserId"]').innerText;
+    // commentBox 요소에서 .comment-name[name="cUserId"] 요소를 찾습니다.
+    let commentElement = commentBox.querySelector('.comment-name[name="cUserId"]');
+
+    // 해당 요소의 텍스트를 가져옵니다.
+    let fullText = commentElement.innerText;
+
+    // "작성자 : " 부분을 제거하고 나머지 텍스트를 cUserId에 저장합니다.
+    let cUserId = fullText.replace('작성자 : ', '');
+
 
     let commentContentId = 'commentContent' + commentSeq;
     let commentContentElement = document.getElementById(commentContentId);

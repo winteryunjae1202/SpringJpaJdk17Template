@@ -52,14 +52,16 @@
 <br/>
 <div class="results-container" id="resultsContainer">
     <div class="result-item" id="resultItem">
-        <p th:text="${data != null ? data : '추출된 텍스트 없음'}"></p>
-        <button class="copy-button" onclick="copyText(this)">복사하기</button>
+        <p th:text=" '품목보고번호 : ' + ${data != null ? data : '추출된 텍스트 없음'}"></p>
+        <button class="copy-button" onclick="copyText(this)">알러지 검사하기</button>
+        <button class="copy-button" onclick="location.href='/allergy/main'">메인페이지로</button>
     </div>
 </div>
 <script>
     function copyText(button) {
-        const textToCopy = button.parentElement.querySelector('p').innerText;
-        navigator.clipboard.writeText(textToCopy).then(() => {
+        const fullText = button.parentElement.querySelector('p').innerText;
+        const dataText = fullText.replace('품목보고번호 : ', ''); // '품목보고번호 : ' 부분 제거
+        navigator.clipboard.writeText(dataText).then(() => {
             alert('검색결과가 복사되었습니다!');
             window.location.href='/allergy/allergySearch';
         }).catch(err => {

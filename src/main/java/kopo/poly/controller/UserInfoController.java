@@ -234,7 +234,7 @@ public class UserInfoController {
 
         log.info(this.getClass().getName() + ".searchPassword End!");
 
-        return "/user/searchPassword";
+        return "user/searchPassword";
     }
 
     /**
@@ -341,7 +341,7 @@ public class UserInfoController {
         }
         log.info(this.getClass().getName() + ".myPage End!");
 
-        return "/user/myPage";
+        return "user/myPage";
     }
 
 
@@ -363,7 +363,7 @@ public class UserInfoController {
         }
         log.info(this.getClass().getName() + ".userInfoEdit End!");
 
-        return "/user/userInfoEdit";
+        return "user/userInfoEdit";
     }
 
 
@@ -407,7 +407,9 @@ public class UserInfoController {
 
         }
 
+
         MsgDTO dto = MsgDTO.builder().result(res).msg(msg).build();
+        log.info("메시지 : " + dto.msg());
 
         log.info(this.getClass().getName() + ".updateUserInfo End!");
 
@@ -517,7 +519,7 @@ public class UserInfoController {
 
         log.info(this.getClass().getName() + ".withDraw End!");
 
-        return "/user/withDraw";
+        return "user/withDraw";
     }
 
 

@@ -2,12 +2,11 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>정보 수정</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
+            background-color: #ffffff;
         }
 
         .container {
@@ -88,11 +87,12 @@
         // HTML로딩이 완료되고, 실행됨
         $(document).ready(function () {
             // 버튼 클릭했을때, 발생되는 이벤트 생성함(onclick 이벤트와 동일함)
-            $("#btnSave").on("click", function () {
-                doSave(); // 사용자 정보 수정 실행
+            $("#btnSave").on("click", function (event) {
+                event.preventDefault();
+                doSave();
             })
 
-            function doSave(){
+            function doSave() {
 
                 let f = document.getElementById("f"); // form 태그
 
@@ -103,25 +103,31 @@
                 }
 
                 const allergyInput = f.allergy.value.trim();
-                if (allergyInput.includes(" ") || allergyInput.endsWith(",")) {
+                if (allergyInput.includes(" ") || allergyInput.endsWith(",") || allergyInput.endsWith(" ")) {
                     alert("알러지 정보를 다시 입력해 주세요. (공백 없이 ,로만 구분하고, ,로 끝나지 않게 입력해 주세요)");
                     location.reload();
                     return;
                 }
 
+
                 $.ajax({
-                        url: "/user/updateUserInfo",
-                        type: "post", // 전송방식은 Post
-                        dataType: "JSON", // 전송 결과는 JSON으로 받기
-                        data: $("#f").serialize(), // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기
-                        success: function (json) { // //user/userInfoEdit 호출
-                            alert(json.msg); // 메시지 띄우기
-                            location.href = "/user/myPage"; // 마이페이지 이동
-                        }
+                    url: "/user/updateUserInfo",
+                    type: "post", // 전송방식은 Post
+                    dataType: "JSON", // 전송 결과는 JSON으로 받기
+                    data: $("#f").serialize(), // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기
+                    success: function (json) { // /user/updateUserInfo 호출
+                        console.log("AJAX 요청 성공");
+                        alert(json.msg); // 메시지 띄우기
+                        window.location.href = "/user/myPage"; // 마이페이지 이동
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX 요청 실패:", error);
+                        alert("서버 요청 중 오류가 발생하였습니다."); // 오류 메시지 표시
                     }
-                )
+                });
             }
-        })
+        });
+
     </script>
 </head>
 <body>
@@ -134,14 +140,15 @@
     <div class="header">
         <h1>개인정보 수정</h1>
     </div>
-    <form id="f">
+    <form id="f" name="f">
         <div class="form-group">
             <label for="userName"><strong>사용자명</strong></label>
             <input type="text" id="userName" name="userName" th:value="${pDTO.userName()}">
         </div>
 
         <div class="form-group">
-            <label for="allergy"><strong>알러지 정보</strong><br/><p>* 알러지가 여러개일 경우 공백을 사용하지 않고 ,로만 구분해주세요. *</p></label>
+            <label for="allergy"><strong>알러지 정보</strong><br/>
+                <p>* 알러지가 여러개일 경우 공백을 사용하지 않고 ,로만 구분해주세요. *</p></label>
             <input type="text" id="allergy" name="allergy" th:value="${pDTO.allergy()}">
         </div>
         <br/>

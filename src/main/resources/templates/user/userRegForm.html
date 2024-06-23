@@ -231,8 +231,8 @@
 
 
             const allergyInput = f.allergy.value.trim();
-            if (allergyInput.includes(" ") || allergyInput.endsWith(",")) {
-                alert("알러지 정보를 다시 입력해 주세요. (공백 없이 ,로만 구분하고, ,로 끝나지 않게 입력해 주세요)");
+            if (allergyInput.includes(" ") || allergyInput.endsWith(",") || allergyInput.endsWith(" ")) {
+                alert("알러지 정보를 다시 입력해 주세요. (공백 없이 ,로만 구분하고, ,와 공백으로 끝나지 않게 입력해 주세요)");
                 f.allergy.value="";
                 f.allergy.focus();
                 return;
