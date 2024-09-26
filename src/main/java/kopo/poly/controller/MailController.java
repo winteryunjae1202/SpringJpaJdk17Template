@@ -23,7 +23,7 @@ public class MailController {
 
     @GetMapping(value = "mailForm")
     public String mailForm() throws Exception {
-        log.info(this.getClass().getName() + "mailForm Start!");
+        log.info(this.getClass().getName() + "mailForm Start!!");
 
         return "/mail/mailForm";
     }
