@@ -68,3 +68,32 @@ p {
     font-size: 14px;
     color: white;
 }
+
+.weather-container {
+    background-color: #ddeaf3;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 200px;
+    font-size: 0.9rem;
+    margin: 0 auto;  /* 가로축 중앙 배치 */
+}
+.weather-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: #f39c12;
+}
+.temperature {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+.details {
+    font-size: 0.8rem;
+    color: #666;
+}
+.details-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
