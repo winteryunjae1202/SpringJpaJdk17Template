@@ -23,6 +23,7 @@ public class DataService implements IDataService {
     @Value("${product.api.key}")
     private String apiKey;
 
+    // xml 형태의 공공데이터 호출을 위함
     private Map<String, String> setProductInfo() {
         Map<String, String> requestHeader = new HashMap<>();
         requestHeader.put("accept", "application/xml;charset=UTF-8");
@@ -80,7 +81,7 @@ public class DataService implements IDataService {
         log.info("allergy : " + allergy);
         log.info("prdlstNm : " + prdlstNm);
 
-        DataDTO rDTO = DataDTO.builder().allergy(allergy).prdlstNm(prdlstNm).build();
+        DataDTO rDTO = DataDTO.builder().allergy(allergy).prdlstNm(prdlstNm).build();   // 데이터 전달을 위해 rDTO에 저장
 
         log.info(this.getClass().getName() + ".getProductApiList End!");
 
