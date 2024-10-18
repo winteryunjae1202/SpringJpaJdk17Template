@@ -298,6 +298,48 @@ function getCommentContent(dto) {
     return typeof dto.commentContents === 'function' ? dto.commentContents() : dto.commentContents;
 }
 
+/* 좋아요 추가 */
+function addLike(noticeSeq) {
+
+    if (confirm("좋아요 하시겠습니까?")) {
+        // Ajax 호출해서 좋아요 추가하기
+        $.ajax({
+                url: "/notice/addLike",
+                type: "post", // 전송방식은 Post
+                dataType: "JSON", // 전송 결과는 JSON으로 받기
+                data: {"noticeSeq": noticeSeq}, // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기
+                success:
+                    function (json) { // /notice/noticeDelete 호출이 성공했다면..
+                        alert(json.msg); // 메시지 띄우기
+                        location.reload();
+                    }
+            }
+        )
+    }
+}
+
+
+/* 좋아요 삭제 */
+function delLike(noticeSeq) {
+
+    if (confirm("좋아요 삭제하시겠습니까?")) {
+        // Ajax 호출해서 글 삭제하기
+        $.ajax({
+                url: "/notice/deleteLike",
+                type: "post", // 전송방식은 Post
+                dataType: "JSON", // 전송 결과는 JSON으로 받기
+                data: {"noticeSeq": noticeSeq}, // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기
+                success:
+                    function (json) { // /notice/noticeDelete 호출이 성공했다면..
+                        alert(json.msg); // 메시지 띄우기
+                        location.reload();
+                    }
+            }
+        )
+    }
+}
+
+
 // 글자 수 체크
 function calBytes(str) {
     let tcount = 0;
