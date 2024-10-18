@@ -1,9 +1,7 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
-    <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" src="/js/jquery.serializeObject.min.js"></script>
     <meta charset="UTF-8">
+    <title>Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>품목보고번호 검색</title>
     <style>
@@ -15,7 +13,7 @@
             width: 300px;
             text-align: center;
             align-items: center;
-            margin: 0 auto;
+            margin: 0 auto; /* 변경된 부분 */
         }
         #imagePreview {
             width: 100%;
@@ -54,89 +52,55 @@
 </a>
 <hr style="border-width: 5px;"/>
 <br/>
-<form id="cardForm" method="post" enctype="multipart/form-data">
-    <div class="container">
-        <br/>
-        <div class="mb-3">
-            <label for="cardNumber" class="form-label">카드 번호</label>
-            <input type="text" class="form-control" id="cardNumber" name="cardNumber" maxlength="16">
-        </div>
-        <input type="file" id="cardImage" name="cardImage" accept="image/*">
-        <br/>
-        <button id="searchButton">품목보고번호 검색하기</button>
-        <button onclick="location.href='/allergy/main'">메인페이지로 돌아가기</button>
+<div class="container">
+    <div id="imagePreview">
+        <span>업로드 된 이미지 없음</span>
     </div>
-</form>
-
+    <input type="file" id="fileInput" accept="image/*">
+    <br/>
+    <button id="searchButton">품목보고번호 검색하기</button>
+</div>
 <script>
-    // btnCardImege 버튼 클릭 시 upload 메서드 호출
-    $("#searchButton").on("click", function () {
-        var formData = new FormData();
-        formData.append("cardNumber", $("#cardNumber").val());
-        formData.append("cardImage", $("#cardImage")[0].files[0]); // 파일 추가
+    const fileInput = document.getElementById('fileInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const searchButton = document.getElementById('searchButton');
 
-        // jQuery를 사용하여 ajax 요청 보내기
-        $.ajax({
-            url: '/api/card-info/upload',
-            type: 'POST',
-            data: formData,
-            processData: false,  // formData가 자동으로 변환되지 않도록 설정
-            contentType: false,  // content type을 false로 설정하여 jQuery가 설정하지 않도록 함
-            success: function(text) {
-                console.log(text)
-                if (text !== null) {
-                    location.href="/allergy/searchItemResult?result=" + encodeURIComponent(text);
-                } else {
-                    alert("사진이 정상적이지 않습니다. 직접 입력해주세요.");
-                }
-            },
-            error: function(error) {
-                console.error("Error:", error);
-                alert("서버 오류가 발생했습니다. 다시 시도해주세요.");
+    fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.innerHTML = `<img src="${e.target.result}" alt="Image Preview">`;
             }
-        });})
+            reader.readAsDataURL(file);
+        } else {
+            imagePreview.innerHTML = '<span>업로드 된 이미지 없음</span>';
+        }
+    });
+    searchButton.addEventListener('click', function() {
 
-    // const fileInput = document.getElementById('fileInput');
-    // const imagePreview = document.getElementById('imagePreview');
-    // const searchButton = document.getElementById('searchButton');
-    //
-    // fileInput.addEventListener('change', function() {
-    //     const file = this.files[0];
-    //     if (file) {
-    //         const reader = new FileReader();
-    //         reader.onload = function(e) {
-    //             imagePreview.innerHTML = `<img src="${e.target.result}" alt="Image Preview">`;
-    //         }
-    //         reader.readAsDataURL(file);
-    //     } else {
-    //         imagePreview.innerHTML = '<span>업로드 된 이미지 없음</span>';
-    //     }
-    // });
-    //
-    // searchButton.addEventListener('click', function() {
-    //
-    //     const file = fileInput.files[0];
-    //     if (file) {
-    //         const formData = new FormData();
-    //         formData.append('file', file);
-    //
-    //         fetch('/api/card-info/upload', {
-    //             method: 'POST',
-    //             body: formData
-    //         })
-    //             .then(response => response.text())
-    //             .then(a => {
-    //                 alert('품목보고번호 : ' + a);
-    //                 location.href = "/allergy/searchItemResult?result=" + encodeURIComponent(a);
-    //             })
-    //             .catch(error => {
-    //                 console.error('Error:', error);
-    //             });
-    //
-    //     } else {
-    //         alert('파일을 선택하세요');
-    //     }
-    // });
+        const file = fileInput.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.text())
+                .then(a => {
+                    alert(a);
+                    location.href = "/allergy/searchItemResult?result=" + encodeURIComponent(a);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+        } else {
+            alert('파일을 선택하세요');
+        }
+    });
 </script>
 
 </body>
