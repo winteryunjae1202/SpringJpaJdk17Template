@@ -54,4 +54,8 @@ public class NoticeSQLEntity {
 
     @Column(name = "user_name") // NativeQuery 결과를 저장하기 위한 변수
     private String userName;
+
+    @Column(name = "image_path") // NativeQuery 결과를 저장하기 위한 변수
+    private String imagePath;
+
 }

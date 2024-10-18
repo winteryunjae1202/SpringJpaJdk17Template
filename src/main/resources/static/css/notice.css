@@ -148,3 +148,28 @@ body {
     border: none;
     cursor: pointer;
 }
+
+
+ .liked {
+     margin-top: 20px;
+     padding: 10px 20px;
+     font-size: 16px;
+     background-color: red;
+     color: white;
+     border: none;
+     cursor: pointer;
+     border-radius: 5px;
+     text-align: center;
+ }
+
+.not-liked {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+}

@@ -2,6 +2,8 @@ package kopo.poly.dto;
 
 import lombok.Builder;
 
+import java.util.List;
+
 @Builder
 public record NoticeDTO(
         
@@ -15,7 +17,9 @@ public record NoticeDTO(
         String regDt, // 등록일
         String chgId, // 수정자 아이디
         String chgDt, // 수정일
-        String userName // 등록자명
+        String userName, // 등록자명
+        String imagePath, // 게시글 이미지 경로
+        List<NoticeImageDTO> images
 ) {
 
 }

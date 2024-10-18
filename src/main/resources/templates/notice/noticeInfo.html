@@ -53,10 +53,25 @@
         <div class="board-cell">내용</div>
         <div class="board-cell" th:text="${rDTO.contents}" id="textContent"></div>
     </div>
+    <div class="image-gallery" style="margin-top: 10px">
+        <div class="board-cell">추가된 이미지<br/></div>
+        <th:block th:each="iList : ${iList}">
+            <img th:src="${iList.imagePath}" class="post-image" style="max-width: 80%; margin-top: 10px;"
+                 alt="Post Image"/>
+        </th:block>
+    </div>
 </div>
 
 
 <div class="button-container">
+    <div th:if="${session.SS_USER_ID}">
+        <div class="heart" th:if="${likeDTO.existsYn()}=='Y'">
+            <button class="liked" th:onclick="delLike([[${rDTO.noticeSeq}]])"> 🤍 </button>
+        </div>
+        <div class="heart" th:unless="${likeDTO.existsYn()}=='Y'">
+            <button class="not-liked" th:onclick="addLike([[${rDTO.noticeSeq}]])"> 좋아요 </button>
+        </div>
+    </div>
     <button class="write-button" id="btnEdit" type="button">수정</button>
     <button class="write-button" id="btnDelete" type="button">삭제</button>
     <button class="write-button" id="btnList" type="button">목록</button>

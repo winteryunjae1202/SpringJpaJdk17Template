@@ -1,25 +1,31 @@
 package kopo.poly.controller;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import kopo.poly.dto.CommentDTO;
-import kopo.poly.dto.MsgDTO;
-import kopo.poly.dto.NoticeDTO;
+import kopo.poly.dto.*;
 import kopo.poly.service.ICommentService;
+import kopo.poly.service.ILikeService;
 import kopo.poly.service.INoticeService;
 import kopo.poly.util.CmmUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 /*
@@ -34,12 +40,15 @@ import java.util.Optional;
 @RequestMapping(value = "/notice")
 @RequiredArgsConstructor
 @Controller
+// @RequiredArgsConstructor 를 통해 메모리에 올라간 서비스 객체를 Controller에서 사용할 수 있게 주입함
 public class NoticeController {
 
-    // @RequiredArgsConstructor 를 통해 메모리에 올라간 서비스 객체를 Controller에서 사용할 수 있게 주입함
     private final INoticeService noticeService;
-
     private final ICommentService commentService;
+    private final ILikeService likeService;
+    private final AmazonS3 s3Client;
+    private final String bucketName;
+
     /**
      * 게시판 리스트 보여주기
      * <p>
@@ -81,40 +90,36 @@ public class NoticeController {
      * GetMapping(value = "notice/noticeReg") =>  GET방식을 통해 접속되는 URL이 notice/noticeReg 경우 아래 함수를 실행함
      */
     @GetMapping(value = "noticeReg")
-    public String noticeReg() {
+    public String noticeReg(HttpSession session) {
 
         log.info(this.getClass().getName() + ".noticeReg Start!");
 
+        String userId = CmmUtil.nvl((String) session.getAttribute("SS_USER_ID"));
+
         log.info(this.getClass().getName() + ".noticeReg End!");
 
-        // 함수 처리가 끝나고 보여줄 HTML (Thymeleaf) 파일명
-        // templates/notice/noticeReg.html
-        return "notice/noticeReg";
+        if (userId.length() > 0) {
+            return "notice/noticeReg";
+        } else {
+            return "redirect:/user/login";
+        }
     }
 
     /**
-     * 게시판 글 등록
-     * <p>
-     * 게시글 등록은 Ajax로 호출되기 때문에 결과는 JSON 구조로 전달해야만 함
-     * JSON 구조로 결과 메시지를 전송하기 위해 @ResponseBody 어노테이션 추가함
+     * 게시글 등록
      */
-    @ResponseBody
+    @Transactional
     @PostMapping(value = "noticeInsert")
-    public MsgDTO noticeInsert(HttpServletRequest request, HttpSession session) {
+    public ResponseEntity<?> noticeInsert(HttpServletRequest request, @RequestParam("images") MultipartFile[] images, HttpSession session) {
 
         log.info(this.getClass().getName() + ".noticeInsert Start!");
 
-        String msg = ""; // 메시지 내용
-
-        MsgDTO dto; // 결과 메시지 구조
-
         try {
-            // 로그인된 사용자 아이디를 가져오기
-            // 로그인을 아직 구현하지 않았기에 공지사항 리스트에서 로그인 한 것처럼 Session 값을 저장함
             String userId = CmmUtil.nvl((String) session.getAttribute("SS_USER_ID"));
             String title = CmmUtil.nvl(request.getParameter("title")); // 제목
             String noticeYn = CmmUtil.nvl(request.getParameter("noticeYn")); // 공지글 여부
             String contents = CmmUtil.nvl(request.getParameter("contents")); // 내용
+            List<NoticeImageDTO> imageDTOList = new ArrayList<>();
 
             /*
              * ####################################################################################
@@ -128,42 +133,56 @@ public class NoticeController {
 
             // 데이터 저장하기 위해 DTO에 저장하기 NoticeDTO pDTO = new NoticeDTO(); 이방식 못씀
             NoticeDTO pDTO = NoticeDTO.builder().userId(userId).title(title)
-                    .noticeYn(noticeYn).contents(contents).build();
+                    .noticeYn(noticeYn).contents(contents).images(imageDTOList).build();
 
             /*
              * 게시글 등록하기위한 비즈니스 로직을 호출
              */
-            noticeService.insertNoticeInfo(pDTO);
+            Long noticeSeq = noticeService.insertNoticeInfo(pDTO);
 
+            // 이미지 처리 및 데이터베이스 저장
+            for (MultipartFile image : images) {
+                if (!image.isEmpty()) {
+                    String extension = FilenameUtils.getExtension(image.getOriginalFilename());
+                    String fileName = "notices/" + userId + "_" + noticeSeq + "_" + UUID.randomUUID().toString() + "." + extension;
+
+                    // ObjectMetadata 설정
+                    ObjectMetadata metadata = new ObjectMetadata();
+                    metadata.setContentLength(image.getSize()); // 이미지 크기를 메타데이터에 설정
+
+                    // ACL 설정 없이 객체 업로드
+                    s3Client.putObject(new PutObjectRequest(bucketName, fileName, image.getInputStream(), metadata)); // ACL 제거
+                    String imageUrl = s3Client.getUrl(bucketName, fileName).toString();
+
+                    NoticeImageDTO noticeImageDTO = new NoticeImageDTO(null, noticeSeq, imageUrl);
+                    imageDTOList.add(noticeImageDTO);
+                }
+            }
+
+            // 이미지 정보 업데이트 (데이터베이스에 이미지 정보 저장)
+            noticeService.updateNoticeImages(noticeSeq, imageDTOList);
             // 저장이 완료되면 사용자에게 보여줄 메시지
-            msg = "등록되었습니다.";
+
+            return ResponseEntity.ok("게시글 등록에 성공했습니다.");
 
         } catch (Exception e) {
-
-            // 저장이 실패되면 사용자에게 보여줄 메시지
-            msg = "실패하였습니다. : " + e.getMessage();
-            log.info(e.toString());
-            e.printStackTrace();
-
+            log.error("게시글 등록 실패", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 등록에 실패했습니다. : " + e.getMessage());
         } finally {
-            // 결과 메시지 전달하기
-            dto = MsgDTO.builder().msg(msg).build();
-
             log.info(this.getClass().getName() + ".noticeInsert End!");
         }
-
-        return dto;
     }
 
     /**
      * 게시판 상세보기
      */
     @GetMapping(value = "noticeInfo")
-    public String noticeInfo(HttpServletRequest request, ModelMap model) throws Exception {
+    public String noticeInfo(HttpSession session, HttpServletRequest request, ModelMap model) throws Exception {
 
         log.info(this.getClass().getName() + ".noticeInfo Start!");
 
         String nSeq = CmmUtil.nvl(request.getParameter("nSeq"), "0"); // 공지글번호(PK)
+        String userId = CmmUtil.nvl((String) session.getAttribute("SS_USER_ID"));
 
         /*
          * ####################################################################################
@@ -171,19 +190,23 @@ public class NoticeController {
          * ####################################################################################
          */
         log.info("nSeq : " + nSeq);
+        log.info("userId : " + userId);
 
         /*
          * 값 전달은 반드시 DTO 객체를 이용해서 처리함 전달 받은 값을 DTO 객체에 넣는다.
          */
         NoticeDTO pDTO = NoticeDTO.builder().noticeSeq(Long.parseLong(nSeq)).build();
 
+        LikeDTO lDTO = LikeDTO.builder()
+                .noticeSeq(Long.parseLong(nSeq))
+                .userId(userId)
+                .build();
+
+
         // 공지사항 상세정보 가져오기
         // Java 8부터 제공되는 Optional 활용하여 NPE(Null Pointer Exception) 처리
         NoticeDTO rDTO = Optional.ofNullable(noticeService.getNoticeInfo(pDTO, true))
                 .orElseGet(() -> NoticeDTO.builder().build());
-
-        // 조회된 리스트 결과값 넣어주기
-        model.addAttribute("rDTO", rDTO);
 
         CommentDTO cDTO = CommentDTO.builder()
                 .noticeSeq(Long.parseLong(nSeq))
@@ -192,7 +215,17 @@ public class NoticeController {
         List<CommentDTO> cList = Optional.ofNullable(commentService.getCommentList(cDTO))
                 .orElseGet(() -> new ArrayList<>());
 
+        List<NoticeImageDTO> iList = Optional.ofNullable(noticeService.getImageList(pDTO))
+                .orElseGet(ArrayList::new);
+
+        LikeDTO likeDTO = Optional.ofNullable(likeService.likeExists(lDTO))
+                .orElseGet(() -> LikeDTO.builder().build());
+
+        // 조회된 리스트 결과값 넣어주기
+        model.addAttribute("rDTO", rDTO);
+        model.addAttribute("iList", iList);
         model.addAttribute("cList", cList);
+        model.addAttribute("likeDTO", likeDTO);
 
         log.info(this.getClass().getName() + ".noticeInfo End!");
 
@@ -225,8 +258,12 @@ public class NoticeController {
         NoticeDTO rDTO = Optional.ofNullable(noticeService.getNoticeInfo(pDTO, false))
                 .orElseGet(() -> NoticeDTO.builder().build());
 
+        List<NoticeImageDTO> iList = Optional.ofNullable(noticeService.getImageList(pDTO))
+                .orElseGet(ArrayList::new);
+
         // 조회된 리스트 결과값 넣어주기
         model.addAttribute("rDTO", rDTO);
+        model.addAttribute("iList", iList);
 
         log.info(this.getClass().getName() + ".noticeEditInfo End!");
 
@@ -236,9 +273,8 @@ public class NoticeController {
     /**
      * 게시판 글 수정
      */
-    @ResponseBody
     @PostMapping(value = "noticeUpdate")
-    public MsgDTO noticeUpdate(HttpSession session, HttpServletRequest request) {
+    public ResponseEntity<?> noticeUpdate(HttpServletRequest request, @RequestParam("images") MultipartFile[] images, HttpSession session) {
 
         log.info(this.getClass().getName() + ".noticeUpdate Start!");
 
@@ -247,10 +283,11 @@ public class NoticeController {
 
         try {
             String userId = CmmUtil.nvl((String) session.getAttribute("SS_USER_ID")); // 아이디
-            String nSeq = CmmUtil.nvl(request.getParameter("nSeq")); // 글번호(PK)
+            Long noticeSeq = Long.parseLong(CmmUtil.nvl(request.getParameter("nSeq"))); // 글번호(PK)
             String title = CmmUtil.nvl(request.getParameter("title")); // 제목
             String noticeYn = CmmUtil.nvl(request.getParameter("noticeYn")); // 공지글 여부
             String contents = CmmUtil.nvl(request.getParameter("contents")); // 내용
+            List<NoticeImageDTO> imageDTOList = new ArrayList<>();
 
             /*
              * ####################################################################################
@@ -258,7 +295,7 @@ public class NoticeController {
              * ####################################################################################
              */
             log.info("userId : " + userId);
-            log.info("nSeq : " + nSeq);
+            log.info("noticeSeq : " + noticeSeq);
             log.info("title : " + title);
             log.info("noticeYn : " + noticeYn);
             log.info("contents : " + contents);
@@ -266,29 +303,41 @@ public class NoticeController {
             /*
              * 값 전달은 반드시 DTO 객체를 이용해서 처리함 전달 받은 값을 DTO 객체에 넣는다.
              */
-            NoticeDTO pDTO = NoticeDTO.builder().userId(userId).noticeSeq(Long.parseLong(nSeq))
-                    .title(title).noticeYn(noticeYn).contents(contents).build();
+            NoticeDTO pDTO = NoticeDTO.builder().userId(userId).noticeSeq(noticeSeq)
+                    .title(title).noticeYn(noticeYn).contents(contents).images(imageDTOList).build();
 
             // 게시글 수정하기 DB
             noticeService.updateNoticeInfo(pDTO);
 
-            msg = "수정되었습니다.";
+            // 이미지 처리 및 S3 업로드
+            for (MultipartFile image : images) {
+                if (!image.isEmpty()) {
+                    String extension = FilenameUtils.getExtension(image.getOriginalFilename());
+                    String fileName = "notices/" + userId + "_" + noticeSeq + "_" + UUID.randomUUID().toString() + "." + extension;
+
+                    // ObjectMetadata 설정
+                    ObjectMetadata metadata = new ObjectMetadata();
+                    metadata.setContentLength(image.getSize()); // 이미지 크기를 메타데이터에 설정
+
+                    // ACL 설정 없이 객체 업로드
+                    s3Client.putObject(new PutObjectRequest(bucketName, fileName, image.getInputStream(), metadata)); // ACL 제거
+                    String imageUrl = s3Client.getUrl(bucketName, fileName).toString();
+
+                    NoticeImageDTO noticeImageDTO = new NoticeImageDTO(null, noticeSeq, imageUrl);
+                    imageDTOList.add(noticeImageDTO);
+                }
+            }
+
+            noticeService.updateNoticeImages(noticeSeq, imageDTOList);
+
+            return ResponseEntity.ok("게시글 수정에 성공했습니다.");
 
         } catch (Exception e) {
-            msg = "실패하였습니다. : " + e.getMessage();
-            log.info(e.toString());
-            e.printStackTrace();
-
+            log.error("게시글 수정 실패", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 수정에 실패했습니다. : " + e.getMessage());
         } finally {
-
-            // 결과 메시지 전달하기
-            dto = MsgDTO.builder().msg(msg).build();
-
             log.info(this.getClass().getName() + ".noticeUpdate End!");
-
         }
-
-        return dto;
     }
 
     /**
@@ -312,6 +361,17 @@ public class NoticeController {
              * ####################################################################################
              */
             log.info("nSeq : " + nSeq);
+
+            List<NoticeImageDTO> imagePathList = noticeService.getImagePathList(Long.parseLong(nSeq));
+
+            for (NoticeImageDTO noticeImageDTO : imagePathList) {
+                if (noticeImageDTO.imagePath() != null && !noticeImageDTO.imagePath().isEmpty()) {
+                    URL url = new URL(noticeImageDTO.imagePath());
+                    String s3ImagePath = url.getPath().substring(1); // URL에서 객체 키 추출 (앞의 '/' 제거)
+                    log.info("s3ImagePath: " + s3ImagePath);
+                    s3Client.deleteObject(bucketName, s3ImagePath);
+                }
+            }
 
             /*
              * 값 전달은 반드시 DTO 객체를 이용해서 처리함 전달 받은 값을 DTO 객체에 넣는다.
@@ -340,4 +400,98 @@ public class NoticeController {
         return dto;
     }
 
+    /**
+     * 좋아요 기능
+     */
+    @ResponseBody
+    @PostMapping(value="addLike")
+    public MsgDTO addLike(HttpServletRequest request, HttpSession session) throws Exception {
+
+        log.info(this.getClass().getName() + ".addLike Start!");
+
+        String userId = (String) session.getAttribute("SS_USER_ID");
+        long noticeSeq = Long.parseLong(CmmUtil.nvl(request.getParameter("noticeSeq")));
+
+        log.info("userId : " + userId);
+        log.info("noticeSeq : " + noticeSeq);
+
+        LikeDTO pDTO = LikeDTO.builder()
+                .userId(userId)
+                .noticeSeq(noticeSeq)
+                .build();
+
+        likeService.insertLike(pDTO);
+
+        MsgDTO rDTO = MsgDTO.builder()
+                .msg("좋아요 하였습니다.")
+                .build();
+
+        log.info(this.getClass().getName() + ".addLike End!");
+
+        return rDTO;
+    }
+
+    /**
+     * 좋아요 취소
+     */
+    @ResponseBody
+    @PostMapping(value="deleteLike")
+    public MsgDTO deleteLike(HttpServletRequest request, HttpSession session) throws Exception {
+
+        log.info(this.getClass().getName() + ".deleteLike Start!");
+
+        String userId = (String) session.getAttribute("SS_USER_ID");
+        long noticeSeq = Long.parseLong(CmmUtil.nvl(request.getParameter("noticeSeq")));
+
+        log.info("userId : " + userId);
+        log.info("noticeSeq : " + noticeSeq);
+
+        LikeDTO pDTO = LikeDTO.builder()
+                .userId(userId)
+                .noticeSeq(noticeSeq)
+                .build();
+
+        likeService.deleteLike(pDTO);
+
+        MsgDTO rDTO = MsgDTO.builder()
+                .msg("좋아요 취소 성공하였습니다.")
+                .build();
+
+        log.info(this.getClass().getName() + ".deleteLike End!");
+
+        return rDTO;
+    }
+
+    /**
+     * 게시글 수정 (각 이미지 삭제)
+     */
+    @DeleteMapping("deleteImage/{imageSeq}")
+    public ResponseEntity<?> deleteImage(HttpServletRequest request, @PathVariable("imageSeq") Long imageSeq) {
+        try {
+
+            String nSeq = CmmUtil.nvl(request.getParameter("nSeq"));
+            log.info("nSeq : " + nSeq);
+            log.info("imageSeq : " + imageSeq);
+
+            NoticeImageDTO pDTO = NoticeImageDTO.builder()
+                    .imageSeq(imageSeq)
+                    .noticeSeq(Long.parseLong(nSeq))
+                    .build();
+
+            String imagePath = noticeService.getImagePath(pDTO);
+
+            if (imagePath != null && !imagePath.isEmpty()) {
+                URL oldimagePath = new URL(imagePath);
+                String substringedimagePath = oldimagePath.getPath().substring(1); // URL에서 객체 키 추출 (앞의 '/' 제거)
+                log.info("substringedimagePath: " + substringedimagePath);
+                s3Client.deleteObject(bucketName, substringedimagePath);
+            }
+
+            noticeService.deleteImageById(pDTO);
+
+            return ResponseEntity.ok().body("이미지 삭제 성공");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("이미지 삭제 실패: " + e.getMessage());
+        }
+    }
 }
