@@ -2,16 +2,12 @@ package kopo.poly.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import kopo.poly.dto.DataDTO;
-import kopo.poly.dto.MongoDTO;
-import kopo.poly.dto.MsgDTO;
-import kopo.poly.dto.UserInfoDTO;
-import kopo.poly.service.IDataService;
-import kopo.poly.service.IMongoService;
-import kopo.poly.service.IUserInfoService;
+import kopo.poly.dto.*;
+import kopo.poly.service.*;
 import kopo.poly.util.CmmUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +30,13 @@ public class MainController {
     private final IDataService dataService;
     private final IUserInfoService userInfoService;
     private final IMongoService mongoService;
+    private final IYoutubeService youtubeService;
+    private final IWeatherService weatherService;
+
+    @Value("${weather.api.region}")
+    private String region;
+    @Value("${weather.api.key}")
+    private String key;
 
 
     /**
@@ -48,8 +51,13 @@ public class MainController {
 
         UserInfoDTO pDTO = userInfoService.getUserInfo(userId);
 
-        model.addAttribute("pDTO", pDTO);
+        WeatherDTO wDTO = weatherService.getWeather(region, key);
 
+        List<YoutubeDTO> yList = youtubeService.getYoutubeInfo();
+
+        model.addAttribute("pDTO", pDTO);
+        model.addAttribute("yList", yList);
+        model.addAttribute("wDTO", wDTO);
         log.info("userName : " + pDTO);
 
         log.info(this.getClass().getName() + ".mainPage End!");
@@ -107,9 +115,9 @@ public class MainController {
 
             log.info("rDTO : " + rDTO);
 
-            List<String> prd_allergy_list = Arrays.stream(rDTO.allergy().split(","))
+            List<String> prd_allergy_list = Arrays.stream(rDTO.allergy().split(","))        // 알러지 비교를 위해 api로부터 호출받은 알러지 목록을 리스트화 시킴
                     .map(String::trim)
-                    .map(s -> s.endsWith(" 함유") ? s.substring(0, s.length() - 3) : s)
+                    .map(s -> s.endsWith(" 함유") ? s.substring(0, s.length() - 3) : s)           // 알러지 비교를 위해 함유로 끝나는 알러지 목록에서 '함유' 제거
                     .collect(Collectors.toList());
             List<String> user_allergy_list = Arrays.asList(pDTO.allergy().split(","));     // 사용자 알러지 정보를 리스트 형태로 변환
 
